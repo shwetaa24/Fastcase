@@ -479,11 +479,16 @@ export default function AdvocateLoginPage() {
               <div className="w-10 h-10 rounded-full bg-[#ECFDF5] flex items-center justify-center text-[#065F46] border border-[#A7F3D0]">
                 <Scale className="w-5 h-5 text-[#059669]" />
               </div>
-              <h3 className="text-base font-bold text-gray-900">Reset Credentials</h3>
+              <div>
+                <h3 className="text-base font-bold text-gray-900">Reset Credentials</h3>
+                <p className="text-xs text-gray-500">Fastcase Security Assistance</p>
+              </div>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              If you have forgotten your password or need to recover your email, please use Email OTP sign-in or email{" "}
-              <strong className="text-gray-900">support@fastcase.in</strong>.
+              If you have forgotten your password or need to recover your email, please use Email OTP sign-in above or email{" "}
+              <a href="mailto:support@fastcase.in" className="font-bold text-gray-900 hover:text-[#059669] underline">
+                support@fastcase.in
+              </a>.
             </p>
             <button
               type="button"
