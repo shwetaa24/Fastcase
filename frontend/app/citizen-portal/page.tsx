@@ -127,6 +127,7 @@ export default function SimpleCitizenPortalPage() {
   const [authMode, setAuthMode] = useState<"password" | "otp">("password");
   const [showAuthPass, setShowAuthPass] = useState<boolean>(false);
   const [authLoading, setAuthLoading] = useState<boolean>(false);
+  const [showForgotModal, setShowForgotModal] = useState<boolean>(false);
   const [pendingAction, setPendingAction] = useState<"solve" | "draft" | "pay" | "tab_draft" | "tab_saved" | null>(null);
 
   // Auth Form Fields
@@ -2548,12 +2549,6 @@ ${template.relief}
           </div>
         </div>
       )}
-                रद्द करा (Cancel)
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── Payment Successful Popup Modal ── */}
       {showSuccessModal && successDetails && (
@@ -2676,7 +2671,16 @@ ${template.relief}
                   />
                 </div>
                 <div>
-                  <label className="block font-bold text-gray-700 mb-1">पासवर्ड</label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-bold text-gray-700">पासवर्ड</label>
+                    <button
+                      type="button"
+                      onClick={() => setShowForgotModal(true)}
+                      className="text-[11px] font-bold text-[#059669] hover:underline cursor-pointer"
+                    >
+                      पासवर्ड विसरलात? (Forgot password?)
+                    </button>
+                  </div>
                   <input
                     type="password"
                     value={authPassword}
@@ -2734,6 +2738,31 @@ ${template.relief}
                 </button>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Reset Credentials / Forgot Password Modal ── */}
+      {showForgotModal && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
+          <div className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl border border-gray-100 space-y-4 animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#ECFDF5] flex items-center justify-center text-[#065F46] border border-[#A7F3D0]">
+                <Scale className="w-5 h-5 text-[#059669]" />
+              </div>
+              <h3 className="text-base font-bold text-gray-900">Reset Credentials</h3>
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              If you have forgotten your password or need to recover your email, please use Email OTP sign-in or email{" "}
+              <strong className="text-gray-900">support@fastcase.in</strong>.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowForgotModal(false)}
+              className="w-full py-2.5 bg-[#013B36] text-white font-bold text-xs rounded-xl hover:bg-[#024E47] transition cursor-pointer"
+            >
+              Close
+            </button>
           </div>
         </div>
       )}

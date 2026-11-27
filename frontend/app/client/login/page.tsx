@@ -22,6 +22,7 @@ export default function ClientLoginPage() {
   const clientLogin = useAuthStore((s) => s.clientLogin);
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [showForgotModal, setShowForgotModal] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -128,7 +129,16 @@ export default function ClientLoginPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Password</label>
+                <div className="flex justify-between items-center mb-1.5">
+                  <label className="block text-xs font-medium text-gray-600">Password</label>
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotModal(true)}
+                    className="text-xs font-medium text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Forgot password?
+                  </button>
+                </div>
                 <div className="relative">
                   <input
                     {...register("password")}
@@ -159,6 +169,35 @@ export default function ClientLoginPage() {
           </div>
         </motion.div>
       </div>
+
+      {/* Forgot Password Modal */}
+      {showForgotModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-xl border border-gray-100 space-y-4"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#ECFDF5] flex items-center justify-center text-[#065F46] border border-[#A7F3D0]">
+                <Scale className="w-5 h-5 text-[#059669]" />
+              </div>
+              <h3 className="text-base font-bold text-gray-900">Reset Credentials</h3>
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed">
+              If you have forgotten your password or need to recover your email, please use Email OTP sign-in or email{" "}
+              <strong className="text-gray-900">support@fastcase.in</strong>.
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowForgotModal(false)}
+              className="w-full py-2.5 bg-[#013B36] text-white font-bold text-xs rounded-xl hover:bg-[#024E47] transition cursor-pointer"
+            >
+              Close
+            </button>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 }
