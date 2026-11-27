@@ -1140,7 +1140,7 @@ ${template.relief}
         applicant_phone: applicantPhone.trim() || user?.phone || "",
         applicant_address: applicantAddress.trim() || "",
         opposite_party: oppositeParty.trim() || "",
-        facts_summary: factsSummary.trim() || activeProblem?.title_mr || "अधिकृत कोर्ट अर्ज",
+        facts_summary: extraDetails.trim() || problemText.trim() || activeProblem?.title_mr || "अधिकृत कोर्ट अर्ज",
         target_authority: activeProblem?.title_mr || "अधिकृत कोर्ट तक्रार अर्ज",
         generated_application: generatedDoc,
       });
