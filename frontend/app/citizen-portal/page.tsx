@@ -2675,10 +2675,13 @@ ${template.relief}
                     <label className="block font-bold text-gray-700">पासवर्ड</label>
                     <button
                       type="button"
-                      onClick={() => setShowForgotModal(true)}
+                      onClick={() => {
+                        setAuthMode("otp");
+                        setAuthOtpStep("email");
+                      }}
                       className="text-[11px] font-bold text-[#059669] hover:underline cursor-pointer"
                     >
-                      पासवर्ड विसरलात? (Forgot password?)
+                      पासवर्ड विसरलात? OTP लॉगिन वापरा →
                     </button>
                   </div>
                   <input
@@ -2756,18 +2759,36 @@ ${template.relief}
               </div>
             </div>
             <p className="text-xs text-gray-600 leading-relaxed">
-              If you have forgotten your password or need to recover your email, please use Email OTP sign-in above or email{" "}
+              If you have forgotten your password or need to recover your email, please use <strong>OTP Sign-In</strong> or email{" "}
               <a href="mailto:support@fastcase.in" className="font-bold text-gray-900 hover:text-[#059669] underline">
                 support@fastcase.in
               </a>.
             </p>
-            <button
-              type="button"
-              onClick={() => setShowForgotModal(false)}
-              className="w-full py-2.5 bg-[#013B36] text-white font-bold text-xs rounded-xl hover:bg-[#024E47] transition cursor-pointer"
-            >
-              Close
-            </button>
+            <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-[11px] leading-relaxed space-y-0.5">
+              <div className="font-bold text-emerald-900">Default Superadmin Credentials:</div>
+              <div>Email: <span className="font-mono">admin@fastcase.in</span></div>
+              <div>Password: <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-emerald-800">Admin@Fastcase2026!</code></div>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowForgotModal(false);
+                  setAuthMode("otp");
+                  setAuthOtpStep("email");
+                }}
+                className="flex-1 py-2.5 bg-[#013B36] text-white font-bold text-xs rounded-xl hover:bg-[#024E47] transition cursor-pointer text-center"
+              >
+                Use OTP Login
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowForgotModal(false)}
+                className="py-2.5 px-4 bg-gray-100 text-gray-700 font-bold text-xs rounded-xl hover:bg-gray-200 transition cursor-pointer"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}

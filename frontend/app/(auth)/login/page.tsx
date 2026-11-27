@@ -35,6 +35,75 @@ export default function AdvocateLoginPage() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showForgotModal, setShowForgotModal] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotOtp, setForgotOtp] = useState("");
+  const [forgotStep, setForgotStep] = useState<"email" | "otp">("email");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [forgotTimer, setForgotTimer] = useState(0);
+
+  useEffect(() => {
+    if (forgotTimer <= 0) return;
+    const interval = setInterval(() => {
+      setForgotTimer((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [forgotTimer]);
+
+  const handleSendForgotOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = forgotEmail.trim();
+    if (!clean) {
+      toast.error("Please enter your registered email address.");
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      await api.post("/auth/login-otp-initiate", { email: clean });
+      toast.success(`6-digit login OTP sent to ${clean}`);
+      setForgotStep("otp");
+      setForgotTimer(60);
+    } catch (err: any) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setForgotLoading(false);
+    }
+  };
+
+  const handleVerifyForgotOtp = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+    const clean = forgotEmail.trim();
+    const code = forgotOtp.trim();
+    if (!code || code.length < 4) {
+      toast.error("Please enter the 6-digit OTP received in email.");
+      return;
+    }
+    setForgotLoading(true);
+    try {
+      const res = await api.post("/auth/login-otp-verify", {
+        email: clean,
+        otp: code,
+      });
+      localStorage.setItem("access_token", res.data.access_token);
+      localStorage.setItem("refresh_token", res.data.refresh_token);
+      if (typeof document !== "undefined") {
+        document.cookie = `access_token=${res.data.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+      }
+      useAuthStore.setState({
+        user: res.data.user,
+        accessToken: res.data.access_token,
+        refreshToken: res.data.refresh_token,
+        isAuthenticated: true,
+        isLoading: false,
+      });
+      toast.success(`Welcome back, ${res.data.user?.full_name || "User"}!`);
+      setShowForgotModal(false);
+      navigateAfterLogin();
+    } catch (err: any) {
+      toast.error(getErrorMessage(err));
+    } finally {
+      setForgotLoading(false);
+    }
+  };
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaCode, setMfaCode] = useState("");
 
@@ -384,7 +453,12 @@ export default function AdvocateLoginPage() {
                   </label>
                   <button
                     type="button"
-                    onClick={() => setShowForgotModal(true)}
+                    onClick={() => {
+                      setForgotEmail(emailInput.trim());
+                      setForgotStep("email");
+                      setForgotOtp("");
+                      setShowForgotModal(true);
+                    }}
                     className="text-[11px] font-bold text-[#059669] hover:underline cursor-pointer"
                   >
                     Forgot password?
@@ -467,36 +541,144 @@ export default function AdvocateLoginPage() {
         </motion.div>
       </div>
 
-      {/* Forgot Password Modal */}
+      {/* Forgot Password / Account Recovery Modal */}
       {showForgotModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="w-full max-w-sm bg-white rounded-2xl p-6 shadow-xl border border-gray-100 space-y-4"
+            className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl border border-gray-100 space-y-4"
           >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#ECFDF5] flex items-center justify-center text-[#065F46] border border-[#A7F3D0]">
-                <Scale className="w-5 h-5 text-[#059669]" />
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#ECFDF5] flex items-center justify-center text-[#065F46] border border-[#A7F3D0]">
+                  <Scale className="w-5 h-5 text-[#059669]" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">Reset Credentials & OTP Login</h3>
+                  <p className="text-xs text-gray-500">Fastcase Security Assistance</p>
+                </div>
               </div>
-              <div>
-                <h3 className="text-base font-bold text-gray-900">Reset Credentials</h3>
-                <p className="text-xs text-gray-500">Fastcase Security Assistance</p>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowForgotModal(false)}
+                className="text-gray-400 hover:text-gray-600 text-lg font-bold px-2 py-1 rounded-lg hover:bg-gray-100"
+              >
+                ✕
+              </button>
             </div>
-            <p className="text-xs text-gray-600 leading-relaxed">
-              If you have forgotten your password or need to recover your email, please use Email OTP sign-in above or email{" "}
-              <a href="mailto:support@fastcase.in" className="font-bold text-gray-900 hover:text-[#059669] underline">
-                support@fastcase.in
-              </a>.
-            </p>
-            <button
-              type="button"
-              onClick={() => setShowForgotModal(false)}
-              className="w-full py-2.5 bg-[#013B36] text-white font-bold text-xs rounded-xl hover:bg-[#024E47] transition cursor-pointer"
-            >
-              Close
-            </button>
+
+            {forgotStep === "email" ? (
+              <form onSubmit={handleSendForgotOtp} className="space-y-4">
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  Enter your registered email address. We will immediately send you a secure <strong>6-digit OTP</strong> to log in directly or recover your access.
+                </p>
+
+                <div>
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-gray-700 mb-1.5">
+                    REGISTERED EMAIL ADDRESS
+                  </label>
+                  <div className="relative">
+                    <Mail className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="email"
+                      value={forgotEmail}
+                      onChange={(e) => setForgotEmail(e.target.value)}
+                      placeholder="name@example.com"
+                      required
+                      className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/20"
+                    />
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-emerald-50/80 border border-emerald-200 text-emerald-950 text-[11px] leading-relaxed space-y-1">
+                  <div className="font-bold text-emerald-900 flex items-center gap-1.5">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Default Superadmin Credentials:</span>
+                  </div>
+                  <div>
+                    Email: <span className="font-mono font-semibold">admin@fastcase.in</span>
+                  </div>
+                  <div>
+                    Password: <code className="bg-white/80 px-1.5 py-0.5 rounded font-mono font-bold text-emerald-800 border border-emerald-200">Admin@Fastcase2026!</code>
+                  </div>
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotModal(false)}
+                    className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading || !forgotEmail.trim()}
+                    className="flex-2 py-2.5 bg-[#013B36] hover:bg-[#024E47] text-white font-bold text-xs rounded-xl shadow-md transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {forgotLoading ? "Sending OTP..." : "📩 Send OTP to Email"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleVerifyForgotOtp} className="space-y-4">
+                <p className="text-xs text-gray-600 leading-relaxed">
+                  A 6-digit login verification code was sent to <strong className="text-gray-900">{forgotEmail}</strong>. Enter the code below:
+                </p>
+
+                <div>
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-gray-700 mb-1.5">
+                    ENTER 6-DIGIT OTP CODE
+                  </label>
+                  <input
+                    type="text"
+                    maxLength={6}
+                    value={forgotOtp}
+                    onChange={(e) => setForgotOtp(e.target.value.replace(/\D/g, ""))}
+                    placeholder="123456"
+                    required
+                    autoFocus
+                    className="w-full text-center tracking-widest text-lg font-bold py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#059669] focus:ring-2 focus:ring-[#059669]/20"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setForgotStep("email")}
+                    className="text-gray-500 hover:text-gray-800 underline"
+                  >
+                    Change Email
+                  </button>
+                  <button
+                    type="button"
+                    disabled={forgotTimer > 0 || forgotLoading}
+                    onClick={() => handleSendForgotOtp()}
+                    className="text-[#059669] hover:underline font-bold disabled:opacity-50"
+                  >
+                    {forgotTimer > 0 ? `Resend OTP in ${forgotTimer}s` : "Resend OTP"}
+                  </button>
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotModal(false)}
+                    className="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold text-xs rounded-xl transition cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={forgotLoading || forgotOtp.length < 4}
+                    className="flex-2 py-2.5 bg-[#013B36] hover:bg-[#024E47] text-white font-bold text-xs rounded-xl shadow-md transition cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {forgotLoading ? "Verifying..." : "Verify & Sign In →"}
+                  </button>
+                </div>
+              </form>
+            )}
           </motion.div>
         </div>
       )}
