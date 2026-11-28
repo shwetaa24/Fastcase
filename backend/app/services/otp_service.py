@@ -24,6 +24,7 @@ _memory_lockout: Dict[str, float] = {}
 
 # Constants
 DEFAULT_OTP_EXPIRY_SECONDS: int = 600         # 10 minutes (600 seconds)
+PASSWORD_RESET_OTP_EXPIRY_SECONDS: int = 600  # 10 minutes (600 seconds)
 MAX_OTP_ATTEMPTS: int = 5                     # 5 attempts
 LOCKOUT_DURATION_SECONDS: int = 12 * 3600     # 12 hours (43,200 seconds)
 REG_SESSION_TTL_SECONDS: int = 15 * 60        # 15 minutes (session retention for resend)
@@ -509,6 +510,157 @@ def delete_login_otp(email: str) -> None:
     """Delete Login OTP entry upon successful verification or cancellation."""
     clean_email = email.lower().strip()
     key = f"login_otp:{clean_email}"
+    client = _get_redis()
+    if client:
+        try:
+            client.delete(key)
+        except Exception:
+            pass
+    _memory_store.pop(key, None)
+
+
+# ── Password Reset OTP (600s expiry, max 5 attempts, 12h lockout) ────────────
+
+def store_password_reset_otp(
+    email: str,
+    otp: str,
+    expiry_seconds: int = PASSWORD_RESET_OTP_EXPIRY_SECONDS,
+) -> None:
+    """Store 6-digit password reset OTP for an existing user (never logged)."""
+    clean_email = email.lower().strip()
+    key = f"pwd_reset_otp:{clean_email}"
+    payload = {
+        "otp": str(otp).strip(),
+        "expires_at": time.time() + expiry_seconds,
+        "attempts": 0,
+        "max_attempts": MAX_OTP_ATTEMPTS,
+    }
+
+    client = _get_redis()
+    if client:
+        try:
+            client.set(key, json.dumps(payload), ex=expiry_seconds)
+            return
+        except Exception as exc:
+            logger.warning("Failed writing Password Reset OTP to Redis: %s", exc)
+
+    _memory_store[key] = payload
+
+
+def get_password_reset_otp_payload(email: str) -> Optional[dict]:
+    """Retrieve active password reset OTP payload if valid and not expired."""
+    clean_email = email.lower().strip()
+    key = f"pwd_reset_otp:{clean_email}"
+
+    client = _get_redis()
+    if client:
+        try:
+            val = client.get(key)
+            if val:
+                return json.loads(val)
+        except Exception:
+            pass
+
+    item = _memory_store.get(key)
+    if item:
+        if time.time() > item.get("expires_at", 0):
+            _memory_store.pop(key, None)
+            return None
+        return item
+    return None
+
+
+def verify_and_clear_password_reset_otp(
+    email: str,
+    otp: str,
+    max_attempts: int = MAX_OTP_ATTEMPTS,
+) -> OtpResult:
+    """Verify submitted Password Reset OTP with attempt limit and 12-hour lockout."""
+    clean_email = email.lower().strip()
+
+    locked, remaining_secs, time_str = is_account_locked(clean_email)
+    if locked:
+        return OtpResult(
+            False,
+            None,
+            f"Account is locked for 12 hours due to too many failed attempts. Please try again after {time_str}.",
+            0,
+            is_locked=True,
+        )
+
+    key = f"pwd_reset_otp:{clean_email}"
+    payload = get_password_reset_otp_payload(clean_email)
+    if not payload:
+        return OtpResult(
+            False,
+            None,
+            "Reset code has expired or was not found. Please request a new reset code.",
+            0,
+        )
+
+    current_attempts = payload.get("attempts", 0)
+    if current_attempts >= max_attempts:
+        delete_password_reset_otp(clean_email)
+        lock_account(clean_email)
+        _, _, time_str = is_account_locked(clean_email)
+        return OtpResult(
+            False,
+            None,
+            f"Too many failed attempts. Account is locked for 12 hours. Please try again after {time_str}.",
+            0,
+            is_locked=True,
+        )
+
+    expected_otp = str(payload.get("otp", "")).strip()
+    submitted_otp = str(otp).strip()
+
+    if (
+        len(expected_otp) == 6
+        and expected_otp.isdigit()
+        and len(submitted_otp) == 6
+        and secrets.compare_digest(expected_otp, submitted_otp)
+    ):
+        delete_password_reset_otp(clean_email)
+        return OtpResult(True, {"email": clean_email}, None, max_attempts - current_attempts)
+
+    current_attempts += 1
+    payload["attempts"] = current_attempts
+    remaining = max(0, max_attempts - current_attempts)
+
+    if current_attempts >= max_attempts:
+        delete_password_reset_otp(clean_email)
+        lock_account(clean_email)
+        _, _, time_str = is_account_locked(clean_email)
+        return OtpResult(
+            False,
+            None,
+            f"Too many failed attempts. Account is locked for 12 hours. Please try again after {time_str}.",
+            0,
+            is_locked=True,
+        )
+
+    ttl = int(payload.get("expires_at", 0) - time.time())
+    if ttl > 0:
+        client = _get_redis()
+        if client:
+            try:
+                client.set(key, json.dumps(payload), ex=ttl)
+            except Exception:
+                pass
+        _memory_store[key] = payload
+
+    return OtpResult(
+        False,
+        None,
+        f"Invalid reset code. {remaining} attempt(s) remaining before 12-hour lockout.",
+        remaining,
+    )
+
+
+def delete_password_reset_otp(email: str) -> None:
+    """Delete Password Reset OTP entry upon verification or cancellation."""
+    clean_email = email.lower().strip()
+    key = f"pwd_reset_otp:{clean_email}"
     client = _get_redis()
     if client:
         try:

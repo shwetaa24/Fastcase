@@ -355,10 +355,20 @@
     "pbkdf",
     "pipefail",
     "umask",
-    "XXXX"
+    "XXXX",
+    "Cooldown",
+    "cooldown",
+    "Mailtrap",
+    "Maharashtra",
+    "astimezone",
+    "infos",
+    "sendinblue",
+    "sendmail",
+    "starttls"
   ],
   "ignoreRegExpList": [
     "[\\u0900-\\u097F]+",
-    "[\\u0A80-\\u0AFF]+"
+    "[\\u0A80-\\u0AFF]+",
+    "#[0-9a-fA-F]{3,8}\\b"
   ]
 }

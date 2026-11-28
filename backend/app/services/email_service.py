@@ -8,6 +8,7 @@ asyncio.to_thread so the FastAPI event loop is never blocked.
 """
 
 import asyncio
+import html as html_lib
 import logging
 from datetime import datetime, timezone, date, time
 from typing import Any
@@ -708,11 +709,116 @@ async def send_otp_verification_email(
     user_name: str = "Advocate",
     expiry_minutes: int = 1,
 ) -> None:
-    """Send OTP email verification for user registration (valid for 60 seconds)."""
+    """Send OTP email verification for user registration."""
     subject = "Secure Verification Code for Your Account"
-    logger.info("[OTP DISPATCH] Code for %s is: %s (valid for 60 seconds)", to_email, otp_code)
-    print(f"[OTP DISPATCH] Code for {to_email} is: {otp_code} (valid for 60 seconds)", flush=True)
     html_body, text_body = render_otp_verification_template(otp_code, user_name, expiry_minutes)
+    await send_email(to_email, subject, html_body, text_body)
+
+
+def render_password_reset_otp_template(
+    otp_code: str,
+    user_name: str = "User",
+    expiry_minutes: int = 10,
+) -> tuple[str, str]:
+    """Render HTML and plain-text templates for 6-digit password reset OTP."""
+    current_year = datetime.now(timezone.utc).year
+    clean_code = str(otp_code).strip()[:6]
+    safe_name = html_lib.escape(str(user_name or "User").strip() or "User")
+
+    digit_cells = "".join([
+        f'<td style="width:46px; height:54px; background:#f0fdf4; border:1.5px solid #86efac; border-radius:10px; text-align:center; font-family:\'Courier New\',Courier,monospace; font-size:28px; font-weight:800; color:#014D46; margin:0 4px;">{html_lib.escape(d)}</td>'
+        for d in clean_code
+    ])
+
+    html_body = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <title>Reset Your Fastcase Password</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f7f8f6; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; -webkit-font-smoothing:antialiased; color:#334155;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f7f8f6; padding:32px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:540px; background-color:#ffffff; border-radius:16px; border:1px solid #e2e8f0; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+          <tr>
+            <td style="background:linear-gradient(160deg, #013B36 0%, #014D46 100%); padding:28px 32px; text-align:center;">
+              <div style="font-size:22px; font-weight:800; color:#ffffff; letter-spacing:0.5px;">
+                Fastcase
+              </div>
+              <div style="font-size:11px; color:#6ee7b7; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; margin-top:2px;">
+                Account Security
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:36px 32px; background-color:#ffffff;">
+              <h2 style="font-size:22px; font-weight:800; color:#0f172a; margin:0 0 12px; line-height:1.3;">
+                Reset Your Password
+              </h2>
+              <p style="font-size:15px; color:#475569; line-height:1.6; margin:0 0 16px;">
+                Hello <strong>{safe_name}</strong>,
+              </p>
+              <p style="font-size:15px; color:#475569; line-height:1.6; margin:0 0 24px;">
+                Use this 6-digit verification code to reset your Fastcase password:
+              </p>
+              <div style="background-color:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:24px 16px; text-align:center; margin:20px 0;">
+                <table role="presentation" cellpadding="0" cellspacing="6" align="center" style="margin:0 auto;">
+                  <tr>
+                    {digit_cells}
+                  </tr>
+                </table>
+                <div style="font-size:13px; color:#64748b; margin-top:16px;">
+                  This code expires in <strong style="color:#0f172a;">{expiry_minutes} minutes</strong>.
+                </div>
+              </div>
+              <p style="font-size:13px; color:#94a3b8; line-height:1.5; margin:20px 0 0;">
+                If you did not request a password reset, you can safely ignore this email and your password will remain unchanged.
+              </p>
+              <p style="font-size:14px; color:#475569; line-height:1.6; margin:24px 0 0; padding-top:16px; border-top:1px solid #f1f5f9;">
+                Warm regards,<br/>
+                <strong style="color:#0f172a;">The Fastcase Team</strong>
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="background-color:#f8fafc; padding:20px 32px; text-align:center; border-top:1px solid #e2e8f0; font-size:12px; color:#94a3b8; line-height:1.5;">
+              &copy; {current_year} Fastcase &bull; India's Complete Legal Operating System
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>"""
+
+    text_body = (
+        f"FASTCASE — RESET YOUR PASSWORD\n"
+        f"====================================================\n\n"
+        f"Hello {user_name},\n\n"
+        f"Use this 6-digit verification code to reset your Fastcase password:\n\n"
+        f"    >>> {clean_code} <<<\n\n"
+        f"This code expires in {expiry_minutes} minutes.\n\n"
+        f"If you did not request a password reset, you can safely ignore this email.\n\n"
+        f"Warm regards,\n"
+        f"The Fastcase Team\n"
+        f"https://app.fastcase.in"
+    )
+    return html_body, text_body
+
+
+async def send_password_reset_otp_email(
+    to_email: str,
+    otp_code: str,
+    user_name: str = "User",
+    expiry_minutes: int = 10,
+) -> None:
+    """Send 6-digit OTP email for password reset (never logs plaintext OTP)."""
+    subject = "Reset Your Fastcase Password"
+    html_body, text_body = render_password_reset_otp_template(otp_code, user_name, expiry_minutes)
     await send_email(to_email, subject, html_body, text_body)
 
 

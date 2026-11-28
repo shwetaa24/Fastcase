@@ -38,6 +38,7 @@ from app.services.email_service import (
     send_citizen_welcome_email,
     send_new_device_login_alert,
     send_otp_verification_email,
+    send_password_reset_otp_email,
 )
 from app.services.otp_service import (
     generate_otp,
@@ -46,8 +47,11 @@ from app.services.otp_service import (
     get_registration_otp_payload,
     store_login_otp,
     verify_and_clear_login_otp,
+    store_password_reset_otp,
+    verify_and_clear_password_reset_otp,
     is_account_locked,
     DEFAULT_OTP_EXPIRY_SECONDS,
+    PASSWORD_RESET_OTP_EXPIRY_SECONDS,
 )
 
 router = APIRouter()
@@ -309,6 +313,21 @@ class ChangePasswordRequest(BaseModel):
     @field_validator("new_password")
     @classmethod
     def new_password_strength(cls, v):
+        return validate_password_strength(v)
+
+
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+    otp: str
+    new_password: str
+
+    @field_validator("new_password")
+    @classmethod
+    def reset_password_strength(cls, v):
         return validate_password_strength(v)
 
 
@@ -1137,6 +1156,96 @@ async def change_password(
                user=current_user, ip=ip, details={"all_sessions_revoked": True})
     db.commit()
     return {"message": "Password changed successfully. All active sessions have been revoked."}
+
+
+@router.post("/forgot-password")
+async def forgot_password(
+    request: Request,
+    data: ForgotPasswordRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """Send a 6-digit email OTP to initiate password reset (anti-enumeration response)."""
+    clean_email = data.email.lower().strip()
+    is_locked, _, time_str = is_account_locked(clean_email)
+    if is_locked:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Account is temporarily locked for 12 hours due to too many failed attempts. Please try again after {time_str}.",
+        )
+
+    user = db.query(User).filter(func.lower(User.email) == clean_email).first()
+    if user and user.is_active:
+        otp_code = generate_otp()
+        store_password_reset_otp(clean_email, otp_code, expiry_seconds=PASSWORD_RESET_OTP_EXPIRY_SECONDS)
+        background_tasks.add_task(
+            send_password_reset_otp_email,
+            to_email=clean_email,
+            otp_code=otp_code,
+            user_name=str(user.full_name or "User"),
+            expiry_minutes=PASSWORD_RESET_OTP_EXPIRY_SECONDS // 60,
+        )
+        ip = extract_ip(request)
+        log_action(db, "PASSWORD_RESET_REQUESTED", "AUTH", str(user.id), user=user, ip=ip)
+        db.commit()
+
+    return {
+        "message": "If an active account exists for this email, a 6-digit password reset code has been sent.",
+        "expires_in_seconds": PASSWORD_RESET_OTP_EXPIRY_SECONDS,
+    }
+
+
+@router.post("/reset-password")
+async def reset_password(
+    request: Request,
+    data: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+):
+    """Verify 6-digit email OTP, update password, and revoke all active sessions."""
+    clean_email = data.email.lower().strip()
+    is_locked, _, time_str = is_account_locked(clean_email)
+    if is_locked:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail=f"Account is temporarily locked for 12 hours due to too many failed attempts. Please try again after {time_str}.",
+        )
+
+    res = verify_and_clear_password_reset_otp(clean_email, data.otp)
+    if not res.is_valid:
+        err_code = status.HTTP_429_TOO_MANY_REQUESTS if getattr(res, "is_locked", False) else status.HTTP_400_BAD_REQUEST
+        raise HTTPException(
+            status_code=err_code,
+            detail=getattr(res, "error_msg", None) or "Invalid or expired reset code.",
+        )
+
+    user = db.query(User).filter(func.lower(User.email) == clean_email).first()
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Account not found.")
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Account is deactivated.")
+
+    user.hashed_password = get_password_hash(data.new_password)
+    user.failed_login_attempts = 0
+    user.locked_until = None
+    user.updated_at = utc_now()
+
+    db.query(UserSession).filter(
+        UserSession.user_id == user.id,
+        UserSession.is_active == True,
+    ).update({"is_active": False})
+
+    ip = extract_ip(request)
+    log_action(
+        db,
+        AuditAction.PASSWORD_CHANGED,
+        "USER",
+        str(user.id),
+        user=user,
+        ip=ip,
+        details={"method": "forgot_password_otp", "all_sessions_revoked": True},
+    )
+    db.commit()
+    return {"message": "Password reset successfully. You can now sign in with your new password."}
 
 
 @router.get("/me")
