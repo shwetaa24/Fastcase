@@ -14,6 +14,7 @@ jobs:
   deploy-vps:
     name: Deploy to Production VPS
     runs-on: ubuntu-latest
+    if: ${{ secrets.VPS_HOST != '' || secrets.EC2_HOST != '' }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
