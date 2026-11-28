@@ -2764,11 +2764,6 @@ ${template.relief}
                 support@fastcase.in
               </a>.
             </p>
-            <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-[11px] leading-relaxed space-y-0.5">
-              <div className="font-bold text-emerald-900">Default Superadmin Credentials:</div>
-              <div>Email: <span className="font-mono">admin@fastcase.in</span></div>
-              <div>Password: <code className="bg-white px-1 py-0.5 rounded font-mono font-bold text-emerald-800">Admin@Fastcase2026!</code></div>
-            </div>
             <div className="flex gap-2">
               <button
                 type="button"
