@@ -75,6 +75,9 @@ export const useAuthStore = create<AuthState>()(
           const { data } = await api.post("/auth/token", params, { headers });
           localStorage.setItem("access_token", data.access_token);
           localStorage.setItem("refresh_token", data.refresh_token);
+          if (typeof document !== "undefined") {
+            document.cookie = `access_token=${data.access_token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+          }
           set({
             user: data.user,
             accessToken: data.access_token,

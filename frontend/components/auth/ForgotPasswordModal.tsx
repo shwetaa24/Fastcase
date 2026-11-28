@@ -92,15 +92,16 @@ export default function ForgotPasswordModal({
       onSuccessEmail?.(cleanEmail);
       setTimeout(() => {
         onClose();
-      }, 100);
+      }, 200);
     } catch (err) {
       toast.error(getErrorMessage(err));
+    } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-2xs p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}

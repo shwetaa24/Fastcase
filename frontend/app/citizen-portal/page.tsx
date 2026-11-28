@@ -301,104 +301,88 @@ export default function SimpleCitizenPortalPage() {
     };
   };
 
-  // ── Publication-Grade HTML Section Builders ──────────────────────────────
+  // ── Publication-Grade HTML Section Builders (Court-Ready, Ink-Friendly) ──
   const renderPublicationHeaderHtml = (chapterBadge: string, title: string) => `
-    <div style="border-bottom: 1.5px solid #cbd5e1; padding-bottom: 5px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 8pt; color: #475569;">
-      <div>
-        <span style="font-weight: 800; color: #1e3a8a;">${chapterBadge}</span>
-        <span style="color: #94a3b8; margin: 0 4px;">•</span>
-        <span style="font-weight: 700; color: #1e293b;">${title}</span>
+    <div style="text-align: center; margin-bottom: 10px; border-bottom: 2px solid #0f172a; padding-bottom: 8px;">
+      <div style="font-size: 11pt; font-weight: 700; color: #334155; letter-spacing: 1px; margin-bottom: 4px;">
+        ॥ श्री गणेशाय नमः ॥ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ॥ सत्यमेव जयते ॥
       </div>
-      <div style="font-weight: 600; color: #64748b;">
-        महाराष्ट्र नागरिक कायदेविषयक मार्गदर्शिका • फास्टकेस विधी कक्ष
+      <div style="display: inline-block; border: 2px solid #0f172a; padding: 4px 18px; border-radius: 4px; background: #f8fafc; margin-top: 3px;">
+        <span style="font-size: 14pt; font-weight: 800; color: #0f172a; letter-spacing: 0.5px;">
+          अधिकृत कायदेशीर तक्रार अर्ज
+        </span>
       </div>
-    </div>
-
-    <!-- Chapter Title Navy Card Banner -->
-    <div style="background: linear-gradient(135deg, #1e3a8a 0%, #0f2e6b 100%); padding: 10px 14px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; color: #ffffff;">
-      <div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="background: rgba(254, 240, 138, 0.2); color: #fef08a; padding: 2px 7px; border-radius: 4px; font-size: 8pt; font-weight: 800; border: 1px solid rgba(254, 240, 138, 0.4);">
-            ${chapterBadge}
-          </span>
-          <span style="font-size: 8.5pt; color: #bfdbfe; font-weight: 700; letter-spacing: 0.5px;">
-            अधिकृत कोर्ट व पोलीस तक्रार मसुदा
-          </span>
-        </div>
-        <div style="font-size: 13.5pt; font-weight: 800; color: #ffffff; margin-top: 3px; letter-spacing: -0.2px;">
-          ${title}
-        </div>
-        <div style="font-size: 8pt; color: #93c5fd; margin-top: 2px;">
-          (भारतीय नागरिक सुरक्षा संहिता २०२३ • भारतीय न्याय संहिता २०२३ • भारतीय साक्ष अधिनियम २०२३)
-        </div>
+      <div style="font-size: 10.5pt; font-weight: 800; color: #0f172a; margin-top: 5px;">
+        ${title}
       </div>
-      <div style="font-size: 26px; line-height: 1; padding-left: 10px;">
-        🏛️
+      <div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">
+        (भारतीय नागरिक सुरक्षा संहिता २०२३ / भारतीय न्याय संहिता २०२३ / ग्राहक संरक्षण कायदा २०१९ अंतर्गत विहित नमुना)
       </div>
     </div>
   `;
 
   const renderEFilingBarHtml = (receipt: string, today: string) => `
-    <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 5px; padding: 6px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 8.5pt;">
-      <div style="color: #166534; font-weight: 800; font-family: monospace;">
-        🔖 ई-फायलिंग नोंदणी क्र.: <b>${receipt}</b>
+    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 12px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; font-size: 8.5pt;">
+      <div style="color: #0f172a; font-weight: 700;">
+        तक्रार नोंदणी क्र.: <span style="font-family: monospace; color: #065f46; font-weight: 800;">${receipt}</span>
       </div>
-      <div style="color: #15803d; font-weight: 700;">
-        ✓ मुद्रांक शुल्क: ₹३० (भरणा पूर्ण • अधिकृत प्रत)
+      <div style="color: #065f46; font-weight: 700; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 2px 8px; border-radius: 4px;">
+        ✓ कायदेशीर ई-प्रमाणित प्रत
       </div>
       <div style="color: #334155; font-weight: 600;">
-        📅 दिनांक: ${today} &bull; कोर्ट पुरावा प्रत
+        दाखल दिनांक: <b>${today}</b>
       </div>
     </div>
   `;
 
   const renderSubjectBoxHtml = (recipient: string, subject: string, actRef?: string) => `
-    <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #1e3a8a; padding: 7px 12px; border-radius: 4px; margin-bottom: 10px; font-size: 9.5pt; line-height: 1.4;">
-      <div>
-        <span style="font-weight: 800; color: #1e3a8a;">प्रति,</span> <span style="font-weight: 700; color: #0f172a;">${recipient}</span>
+    <div style="margin-bottom: 10px; font-size: 10pt; line-height: 1.45; color: #0f172a;">
+      <div style="font-weight: 800; margin-bottom: 2px;">प्रति,</div>
+      <div style="font-weight: 700; padding-left: 14px; color: #0f172a;">
+        ${recipient}
       </div>
-      <div style="margin-top: 4px; padding-top: 4px; border-top: 1px dashed #cbd5e1;">
-        <span style="font-weight: 800; color: #1e3a8a;">विषय:</span> <span style="font-weight: 700; color: #0f172a;">${subject}</span>
+    </div>
+
+    <div style="background: #f8fafc; border: 1.5px solid #0f172a; border-radius: 4px; padding: 7px 12px; margin-bottom: 10px; font-size: 9.5pt; line-height: 1.4;">
+      <div>
+        <span style="font-weight: 800; color: #0f172a;">विषय:</span>
+        <span style="font-weight: 700; color: #0f172a; text-decoration: underline;"> ${subject}</span>
       </div>
       ${actRef ? `
-      <div style="margin-top: 2px; font-size: 8.5pt; color: #334155; font-weight: 600;">
-        <span style="color: #1e3a8a; font-weight: 700;">कायदेशीर संदर्भ:</span> ${actRef}
+      <div style="margin-top: 3px; font-size: 8.5pt; color: #475569; font-weight: 600;">
+        <b>कायदेशीर संदर्भ:</b> ${actRef}
       </div>` : ""}
     </div>
   `;
 
   const renderPartiesTableHtml = (m: ReturnType<typeof getPetitionModel>) => `
     <div style="margin-bottom: 10px;">
-      <div style="font-size: 9pt; font-weight: 800; color: #1e3a8a; margin-bottom: 3px; display: flex; justify-content: space-between; align-items: center;">
-        <span>📋 पक्षकार व तक्रार तपशील तक्ता (Parties & Claim Particulars):</span>
-        <span style="font-size: 8pt; font-weight: 600; color: #64748b;">(कोर्ट व पोलीस रेकॉर्डसाठी अधिकृत नोंद)</span>
-      </div>
-      <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #1e3a8a; font-size: 9pt; line-height: 1.4; font-family: inherit;">
+      <table style="width: 100%; border-collapse: collapse; border: 1.5px solid #0f172a; font-size: 9pt; line-height: 1.4; font-family: inherit;">
         <thead>
-          <tr style="background: #1e3a8a; color: #ffffff;">
-            <th style="width: 50%; padding: 4px 8px; text-align: left; font-weight: 700; border-right: 1px solid #ffffff; font-size: 9pt;">
+          <tr style="background: #e2e8f0; border-bottom: 1.5px solid #0f172a; color: #0f172a;">
+            <th style="width: 50%; padding: 5px 8px; text-align: left; font-weight: 800; border-right: 1.5px solid #0f172a; font-size: 9pt;">
               [१] तक्रारदार / अर्जदार (Complainant)
             </th>
-            <th style="width: 50%; padding: 4px 8px; text-align: left; font-weight: 700; font-size: 9pt;">
-              [२] विरोधी पक्ष / प्रतिवादी (Opposite Party)
+            <th style="width: 50%; padding: 5px 8px; text-align: left; font-weight: 800; font-size: 9pt;">
+              [२] सामनेवाले / विरोधी पक्ष (Opposite Party)
             </th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding: 6px 8px; vertical-align: top; border-right: 1.5px solid #1e3a8a; background: #fbfdfc;">
-              <div><b style="color: #1e3a8a;">पूर्ण नाव:</b> ${m.applicant}</div>
-              <div><b style="color: #1e3a8a;">मोबाईल:</b> ${m.phone}</div>
-              <div><b style="color: #1e3a8a;">पूर्ण पत्ता:</b> ${m.address}</div>
-              ${m.bank ? `<div><b style="color: #1e3a8a;">बँक / संस्था:</b> ${m.bank}</div>` : ""}
-              ${m.utr ? `<div><b style="color: #1e3a8a;">खाते क्र.:</b> ${m.utr}</div>` : ""}
+            <td style="padding: 6px 8px; vertical-align: top; border-right: 1.5px solid #0f172a; background: #ffffff;">
+              <div><b>पूर्ण नाव:</b> ${m.applicant}</div>
+              <div><b>मोबाईल:</b> ${m.phone}</div>
+              <div><b>पूर्ण पत्ता:</b> ${m.address}</div>
+              ${m.bank ? `<div><b>बँक / संस्था:</b> ${m.bank}</div>` : ""}
+              ${m.utr ? `<div><b>खाते क्र.:</b> ${m.utr}</div>` : ""}
             </td>
-            <td style="padding: 6px 8px; vertical-align: top; background: #fbfdfc;">
-              <div><b style="color: #1e3a8a;">नाव / हुद्दा:</b> ${m.opp}</div>
-              <div><b style="color: #1e3a8a;">पत्ता / शाखा:</b> ${m.oppAddress}</div>
-              <div><b style="color: #1e3a8a;">तारीख व वेळ:</b> ${m.date} ${m.time ? `(${m.time})` : ""}</div>
-              ${m.amount ? `<div><b style="color: #1e3a8a;">फसवणूक / दावा:</b> <span style="color: #b91c1c; font-weight: 800;">₹ ${m.amount}/-</span></div>` : ""}
-              ${m.utr ? `<div><b style="color: #1e3a8a;">व्यवहार / UTR क्र.:</b> <span style="font-family: monospace; font-weight: 700;">${m.utr}</span></div>` : ""}
+            <td style="padding: 6px 8px; vertical-align: top; background: #ffffff;">
+              <div><b>नाव / हुद्दा:</b> ${m.opp}</div>
+              <div><b>पत्ता / शाखा:</b> ${m.oppAddress}</div>
+              <div><b>तारीख व वेळ:</b> ${m.date} ${m.time ? `(${m.time})` : ""}</div>
+              ${m.amount ? `<div><b>दावा रक्कम:</b> <span style="color: #b91c1c; font-weight: 800;">₹ ${m.amount}/-</span></div>` : ""}
+              ${m.utr ? `<div><b>व्यवहार / UTR क्र.:</b> <span style="font-family: monospace; font-weight: 700;">${m.utr}</span></div>` : ""}
             </td>
           </tr>
         </tbody>
@@ -407,15 +391,15 @@ export default function SimpleCitizenPortalPage() {
   `;
 
   const renderOrangeDeadlineBox = (deadlineToUse: string) => `
-    <div style="background: #fff7ed; border-left: 3.5px solid #ea580c; border: 1px solid #fed7aa; border-left-width: 3.5px; border-left-color: #ea580c; padding: 6px 10px; margin-bottom: 9px; border-radius: 0 4px 4px 0; font-size: 8.5pt; color: #9a3412;">
-      <b>⏱ वेळ किती महत्त्वाची? (कायदेशीर मुदत मर्यादा):</b> ${deadlineToUse}
+    <div style="background: #fffbeb; border-left: 3.5px solid #d97706; border: 1px solid #fde68a; border-left-width: 3.5px; border-left-color: #d97706; padding: 6px 10px; margin-bottom: 9px; border-radius: 0 4px 4px 0; font-size: 8.5pt; color: #92400e;">
+      <b>⏱ कायदेशीर मुदत मर्यादा व महत्त्व:</b> ${deadlineToUse}
     </div>
   `;
 
   const renderReliefBox = (relief: string) => `
-    <div style="background: #f0fdf4; border-left: 3.5px solid #16a34a; border: 1px solid #bbf7d0; border-left-width: 3.5px; border-left-color: #16a34a; padding: 7px 10px; margin-bottom: 9px; border-radius: 0 4px 4px 0;">
-      <div style="font-weight: 800; color: #166534; font-size: 9.5pt; margin-bottom: 2px;">विनंती / मागणी व कायदेशीर दाद (Relief & Prayers):</div>
-      <div style="font-size: 9pt; line-height: 1.45; color: #14532d;">${relief}</div>
+    <div style="background: #f0fdf4; border-left: 3.5px solid #059669; border: 1.5px solid #86efac; border-left-width: 3.5px; border-left-color: #059669; padding: 8px 12px; margin-bottom: 9px; border-radius: 0 4px 4px 0;">
+      <div style="font-weight: 800; color: #065f46; font-size: 9.5pt; margin-bottom: 3px;">विनंती व कायदेशीर मागणी (Relief & Prayers):</div>
+      <div style="font-size: 9pt; line-height: 1.45; color: #14532d; font-weight: 500;">${relief}</div>
     </div>
   `;
 
@@ -423,34 +407,30 @@ export default function SimpleCitizenPortalPage() {
     if (!summaryTable) return "";
     return `
       <div style="margin-bottom: 10px;">
-        <div style="font-size: 9pt; font-weight: 800; color: #1e3a8a; margin-bottom: 3px; display: flex; justify-content: space-between; align-items: center;">
-          <span>📊 एका दृष्टिक्षेपात संपूर्ण प्रक्रिया (Quick Action Protocol):</span>
-          <span style="font-size: 8pt; font-weight: 600; color: #64748b;">(नागरिक मार्गदर्शिका अधिकृत मार्गदर्शक तक्ता)</span>
-        </div>
         <table style="width: 100%; border-collapse: collapse; border: 1px solid #cbd5e1; font-size: 8.5pt; line-height: 1.35; font-family: inherit;">
           <tbody>
             <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-              <td style="width: 25%; padding: 4px 8px; font-weight: 700; color: #1e3a8a; border-right: 1px solid #e2e8f0;">➜ समस्या</td>
+              <td style="width: 25%; padding: 4px 8px; font-weight: 700; color: #0f172a; border-right: 1px solid #e2e8f0;">➜ समस्या</td>
               <td style="padding: 4px 8px; color: #0f172a;">${summaryTable.problem}</td>
             </tr>
             <tr style="background: #ffffff; border-bottom: 1px solid #e2e8f0;">
-              <td style="padding: 4px 8px; font-weight: 700; color: #1e3a8a; border-right: 1px solid #e2e8f0;">➜ पहिली तात्काळ कृती</td>
+              <td style="padding: 4px 8px; font-weight: 700; color: #0f172a; border-right: 1px solid #e2e8f0;">➜ पहिली तात्काळ कृती</td>
               <td style="padding: 4px 8px; color: #0f172a;">${summaryTable.first_action}</td>
             </tr>
             <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-              <td style="padding: 4px 8px; font-weight: 700; color: #1e3a8a; border-right: 1px solid #e2e8f0;">➜ सक्षम कार्यालय</td>
+              <td style="padding: 4px 8px; font-weight: 700; color: #0f172a; border-right: 1px solid #e2e8f0;">➜ सक्षम कार्यालय</td>
               <td style="padding: 4px 8px; color: #0f172a;">${summaryTable.competent_authority}</td>
             </tr>
             <tr style="background: #ffffff; border-bottom: 1px solid #e2e8f0;">
-              <td style="padding: 4px 8px; font-weight: 700; color: #1e3a8a; border-right: 1px solid #e2e8f0;">➜ आवश्यक कागदपत्रे</td>
+              <td style="padding: 4px 8px; font-weight: 700; color: #0f172a; border-right: 1px solid #e2e8f0;">➜ आवश्यक कागदपत्रे</td>
               <td style="padding: 4px 8px; color: #0f172a;">${summaryTable.docs}</td>
             </tr>
             <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0;">
-              <td style="padding: 4px 8px; font-weight: 700; color: #1e3a8a; border-right: 1px solid #e2e8f0;">➜ कायदेशीर मुदत</td>
+              <td style="padding: 4px 8px; font-weight: 700; color: #0f172a; border-right: 1px solid #e2e8f0;">➜ कायदेशीर मुदत</td>
               <td style="padding: 4px 8px; color: #0f172a;">${summaryTable.statutory_time}</td>
             </tr>
             <tr style="background: #ffffff;">
-              <td style="padding: 4px 8px; font-weight: 700; color: #1e3a8a; border-right: 1px solid #e2e8f0;">➜ तक्रार न घेतल्यास</td>
+              <td style="padding: 4px 8px; font-weight: 700; color: #0f172a; border-right: 1px solid #e2e8f0;">➜ तक्रार न घेतल्यास</td>
               <td style="padding: 4px 8px; color: #0f172a;">${summaryTable.if_refused}</td>
             </tr>
           </tbody>
@@ -461,17 +441,17 @@ export default function SimpleCitizenPortalPage() {
 
   const renderEnclosuresChecklistHtml = () => `
     <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 4px; padding: 6px 10px; margin-bottom: 8px; font-size: 8.5pt; color: #334155;">
-      <b>सोबत जोडलेली अधिकृत कागदपत्रे (Enclosures Checklist):</b><br/>
-      ☑ १. तक्रारदाराच्या आधार कार्डची प्रमाणित प्रत &bull;
-      ☑ २. बँक पासबुक / स्टेटमेंट / कापलेल्या रकमेची नोंद &bull;
+      <b>सोबत जोडलेली कागदपत्रे (सत्यप्रत):</b><br/>
+      ☑ १. तक्रारदाराच्या आधार कार्डची प्रत &bull;
+      ☑ २. बँक पासबुक / स्टेटमेंट / व्यवहाराची पावती &bull;
       ☑ ३. व्यवहार UTR पावती / मेसेज स्क्रीनशॉट &bull;
-      ☑ ४. विरोधी पक्षाशी केलेल्या पत्रव्यवहाराची सत्यप्रत.
+      ☑ ४. विरोधी पक्षाशी केलेल्या पत्रव्यवहाराची प्रत.
     </div>
   `;
 
   const renderVerificationHtml = () => `
     <div style="border-top: 1px dashed #cbd5e1; padding-top: 5px; margin-bottom: 10px; font-size: 8pt; color: #475569; text-align: justify;">
-      <b>सत्यप्रतिज्ञा (Statutory Verification under BNSS):</b> मी, वरील तक्रारदार सत्यप्रतिज्ञेवर नमूद करतो की, वरील तक्रारीतील सर्व मुद्दे व परिच्छेद माझ्या व्यक्तिगत माहितीनुसार व कागदपत्रांनुसार सत्य व बिनचूक आहेत. मी या अर्जात कोणतीही खोटी माहिती दिलेली नाही.
+      <b>सत्यप्रतिज्ञा (Statutory Verification):</b> मी, वर नमूद तक्रारदार सत्यप्रतिज्ञेवर जाहीर करतो/करते की, वरील तक्रारीतील सर्व मुद्दे व परिच्छेद माझ्या व्यक्तिगत माहितीनुसार व कागदपत्रांनुसार सत्य व बिनचूक आहेत. मी या अर्जात कोणतीही खोटी माहिती दिलेली नाही.
     </div>
   `;
 
@@ -479,10 +459,10 @@ export default function SimpleCitizenPortalPage() {
     <div style="display: flex; justify-content: space-between; align-items: flex-end; font-size: 9pt; margin-bottom: 14px;">
       <div>
         <div><b>दिनांक:</b> ${today}</div>
-        <div><b>ठिकाण:</b> ${place}</div>
+        <div><b>ठिकाण:</b> ${place || "स्थानिक"}</div>
       </div>
       <div style="text-align: center;">
-        <div style="border-bottom: 1.5px solid #1e293b; width: 180px; margin-bottom: 4px;"></div>
+        <div style="border-bottom: 1.5px solid #0f172a; width: 180px; margin-bottom: 4px;"></div>
         <div style="font-weight: 800; color: #0f172a;">तक्रारदाराची सही / अंगठा</div>
         <div style="font-size: 8.5pt; color: #475569;">(${applicant})</div>
       </div>
@@ -492,7 +472,7 @@ export default function SimpleCitizenPortalPage() {
   const renderPublicationFooterHtml = (pageNum: number, totalPages: number, receipt: string) => `
     <div style="position: absolute; bottom: 12px; left: 42px; right: 42px; border-top: 1px solid #e2e8f0; padding-top: 4px; display: flex; justify-content: space-between; align-items: center; font-size: 7.5pt; color: #64748b;">
       <span>फास्टकेस लीगल ईआरपी &bull; अधिकृत नागरिक विधी सहाय्य प्रणाली</span>
-      <span style="background: #f1f5f9; padding: 2px 8px; border-radius: 9999px; font-weight: 700; color: #1e3a8a; border: 1px solid #cbd5e1;">[ पृष्ठ ${pageNum} पैकी ${totalPages} ]</span>
+      <span style="background: #f1f5f9; padding: 2px 8px; border-radius: 9999px; font-weight: 700; color: #0f172a; border: 1px solid #cbd5e1;">[ पृष्ठ ${pageNum} पैकी ${totalPages} ]</span>
       <span>कायदेशीर सल्ल्याचा पर्याय नाही &bull; BNSS, BNS, BSA २०२३</span>
     </div>
   `;
@@ -517,11 +497,11 @@ export default function SimpleCitizenPortalPage() {
           ${renderPartiesTableHtml(m)}
           ${renderOrangeDeadlineBox(m.deadlineToUse)}
 
-          <div style="font-size: 9.5pt; line-height: 1.45; color: #0f172a; text-align: justify; margin-bottom: 8px;">
-            <div style="font-weight: 700; margin-bottom: 4px; color: #1e3a8a;">महोदय, मी खालीलप्रमाणे वस्तुस्थिती व कायदेशीर तक्रार सादर करत आहे:</div>
-            <div style="margin-bottom: 4px;"><b>१. प्राथमिक घटनाक्रम (Facts):</b> ${m.factsClean}</div>
-            <div style="margin-bottom: 4px;"><b>२. पाठपुरावा व नकार (Follow-up & Breach):</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला, परंतु त्यांनी कायदेशीर जबाबदारी पार पाडण्यास नकार दिला व टाळाटाळ केली.</div>
-            <div><b>३. कायदेशीर उल्लंघन (Statutory Breach):</b> सदर कृत्य हे ${m.template.act_reference || "प्रचलित कायदे व नियमावली"} अन्वये कायद्याचे थेट उल्लंघन आहे.</div>
+          <div style="font-size: 9.5pt; line-height: 1.5; color: #0f172a; text-align: justify; margin-bottom: 10px;">
+            <div style="font-weight: 800; margin-bottom: 5px; color: #0f172a;">महोदय, तक्रारदाराचे सविस्तर व सत्य कथन खालीलप्रमाणे आहे:-</div>
+            <div style="margin-bottom: 5px;"><b>१. प्राथमिक घटनाक्रम व वस्तुस्थिती:</b> ${m.factsClean}</div>
+            <div style="margin-bottom: 5px;"><b>२. पाठपुरावा व नकार:</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला, परंतु त्यांनी कायदेशीर जबाबदारी पार पाडण्यास नकार दिला व जाणीवपूर्वक टाळाटाळ केली.</div>
+            <div><b>३. कायदेशीर उल्लंघन:</b> सदर कृत्य हे ${m.template.act_reference || "प्रचलित कायदे व नियमावली"} अन्वये कायद्याचे थेट व गंभीर उल्लंघन आहे.</div>
           </div>
 
           ${renderReliefBox(m.template.relief)}
@@ -541,22 +521,22 @@ export default function SimpleCitizenPortalPage() {
           ${renderOrangeDeadlineBox(m.deadlineToUse)}
 
           <div style="font-size: 9.5pt; line-height: 1.5; color: #0f172a; text-align: justify; margin-top: 8px;">
-            <div style="font-weight: 700; margin-bottom: 5px; color: #1e3a8a; font-size: 10pt;">महोदय, मी खालीलप्रमाणे सविस्तर वस्तुस्थिती व तक्रार सादर करत आहे:</div>
-            <div style="margin-bottom: 6px;"><b>१. प्राथमिक वस्तुस्थिती (Facts of the Case):</b> ${m.factsClean}</div>
-            <div style="margin-bottom: 6px;"><b>२. पाठपुरावा व नकार (Follow-up & Refusal):</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला. परंतु विरोधी पक्षाने आपली कायदेशीर जबाबदारी पार पाडण्यास साफ नकार दिला व जाणीवपूर्वक टाळाटाळ केली.</div>
-            <div><b>३. कायदेशीर उल्लंघन (Statutory Breach):</b> विरोधी पक्षाचे सदर कृत्य हे ${m.template.act_reference} अन्वये कायद्याचे थेट व गंभीर उल्लंघन असून तक्रारदारास कायदेशीर दाद मिळणे आवश्यक आहे.</div>
+            <div style="font-weight: 800; margin-bottom: 5px; color: #0f172a; font-size: 10pt;">महोदय, तक्रारदाराचे सविस्तर व सत्य कथन खालीलप्रमाणे आहे:-</div>
+            <div style="margin-bottom: 6px;"><b>१. प्राथमिक वस्तुस्थिती व घटनाक्रम:</b> ${m.factsClean}</div>
+            <div style="margin-bottom: 6px;"><b>२. पाठपुरावा व नकार:</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला. परंतु विरोधी पक्षाने आपली कायदेशीर जबाबदारी पार पाडण्यास साफ नकार दिला व जाणीवपूर्वक टाळाटाळ केली.</div>
+            <div><b>३. कायदेशीर उल्लंघन:</b> विरोधी पक्षाचे सदर कृत्य हे ${m.template.act_reference} अन्वये कायद्याचे थेट व गंभीर उल्लंघन असून तक्रारदारास कायदेशीर दाद मिळणे आवश्यक आहे.</div>
           </div>
 
-          <div style="margin-top: 20px; padding: 8px 12px; background: #f8fafc; border: 1.5px dashed #1e3a8a; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 9pt; color: #1e3a8a; font-weight: 700;">
-            <span>🏛️ फास्टकेस अधिकृत मसुदा</span>
-            <span>(सदर अर्जाचा पुढील भाग, संपूर्ण प्रक्रिया तक्ता, मागण्या व स्वाक्षरी पृष्ठ २ वर चालू...) &rarr;</span>
+          <div style="margin-top: 20px; padding: 8px 12px; background: #f8fafc; border: 1.5px dashed #0f172a; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 9pt; color: #0f172a; font-weight: 700;">
+            <span>🏛️ अधिकृत विधी मसुदा</span>
+            <span>(सदर अर्जाचा पुढील भाग, मागणी व स्वाक्षरी पृष्ठ २ वर चालू...) &rarr;</span>
           </div>
 
           ${renderPublicationFooterHtml(1, 2, m.receiptToUse)}
         </div>
 
         <div class="a4-page page-2 page-break">
-          <div style="border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 9.5pt; color: #1e3a8a; font-weight: 700;">
+          <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 9.5pt; color: #0f172a; font-weight: 700;">
             <div>
               <span>🏛️ कोर्ट तक्रार अर्ज (पुढे चालू - पृष्ठ २) &bull; विषय: ${m.template.subject.slice(0, 48)}...</span>
             </div>
@@ -567,8 +547,8 @@ export default function SimpleCitizenPortalPage() {
 
           <div style="font-size: 9.5pt; line-height: 1.45; color: #0f172a; text-align: justify; margin-bottom: 10px;">
             ${m.extra ? `
-            <div style="margin-bottom: 8px; background: #fdfdfe; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px;">
-              <b style="color: #1e3a8a;">४. विशेष हकीकत व पुराव्यांचा तपशील:</b><br/>
+            <div style="margin-bottom: 8px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 4px;">
+              <b style="color: #0f172a;">४. विशेष हकीकत व पुराव्यांचा तपशील:</b><br/>
               <span style="font-size: 9pt; color: #1e293b;">${m.extra}</span>
             </div>` : ""}
 
@@ -726,11 +706,11 @@ export default function SimpleCitizenPortalPage() {
           ${renderPartiesTableHtml(m)}
           ${renderOrangeDeadlineBox(m.deadlineToUse)}
 
-          <div style="font-size: 9.5pt; line-height: 1.45; color: #0f172a; text-align: justify; margin-bottom: 8px;">
-            <div style="font-weight: 700; margin-bottom: 4px; color: #1e3a8a;">महोदय, मी खालीलप्रमाणे वस्तुस्थिती व कायदेशीर तक्रार सादर करत आहे:</div>
-            <div style="margin-bottom: 4px;"><b>१. प्राथमिक घटनाक्रम (Facts):</b> ${m.factsClean}</div>
-            <div style="margin-bottom: 4px;"><b>२. पाठपुरावा व नकार (Follow-up & Breach):</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला, परंतु त्यांनी कायदेशीर जबाबदारी पार पाडण्यास नकार दिला व टाळाटाळ केली.</div>
-            <div><b>३. कायदेशीर उल्लंघन (Statutory Breach):</b> सदर कृत्य हे ${m.template.act_reference || "प्रचलित कायदे व नियमावली"} अन्वये कायद्याचे थेट उल्लंघन आहे.</div>
+          <div style="font-size: 9.5pt; line-height: 1.5; color: #0f172a; text-align: justify; margin-bottom: 10px;">
+            <div style="font-weight: 800; margin-bottom: 5px; color: #0f172a;">महोदय, तक्रारदाराचे सविस्तर व सत्य कथन खालीलप्रमाणे आहे:-</div>
+            <div style="margin-bottom: 5px;"><b>१. प्राथमिक घटनाक्रम व वस्तुस्थिती:</b> ${m.factsClean}</div>
+            <div style="margin-bottom: 5px;"><b>२. पाठपुरावा व नकार:</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला, परंतु त्यांनी कायदेशीर जबाबदारी पार पाडण्यास नकार दिला व जाणीवपूर्वक टाळाटाळ केली.</div>
+            <div><b>३. कायदेशीर उल्लंघन:</b> सदर कृत्य हे ${m.template.act_reference || "प्रचलित कायदे व नियमावली"} अन्वये कायद्याचे थेट व गंभीर उल्लंघन आहे.</div>
           </div>
 
           ${renderReliefBox(m.template.relief)}
@@ -774,15 +754,15 @@ export default function SimpleCitizenPortalPage() {
           ${renderOrangeDeadlineBox(m.deadlineToUse)}
 
           <div style="font-size: 9.5pt; line-height: 1.5; color: #0f172a; text-align: justify; margin-top: 8px;">
-            <div style="font-weight: 700; margin-bottom: 5px; color: #1e3a8a; font-size: 10pt;">महोदय, मी खालीलप्रमाणे सविस्तर वस्तुस्थिती व तक्रार सादर करत आहे:</div>
-            <div style="margin-bottom: 6px;"><b>१. प्राथमिक वस्तुस्थिती (Facts of the Case):</b> ${m.factsClean}</div>
-            <div style="margin-bottom: 6px;"><b>२. पाठपुरावा व नकार (Follow-up & Refusal):</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला. परंतु विरोधी पक्षाने आपली कायदेशीर जबाबदारी पार पाडण्यास साफ नकार दिला व जाणीवपूर्वक टाळाटाळ केली.</div>
-            <div><b>३. कायदेशीर उल्लंघन (Statutory Breach):</b> विरोधी पक्षाचे सदर कृत्य हे ${m.template.act_reference} अन्वये कायद्याचे थेट व गंभीर उल्लंघन असून तक्रारदारास कायदेशीर दाद मिळणे आवश्यक आहे.</div>
+            <div style="font-weight: 800; margin-bottom: 5px; color: #0f172a; font-size: 10pt;">महोदय, तक्रारदाराचे सविस्तर व सत्य कथन खालीलप्रमाणे आहे:-</div>
+            <div style="margin-bottom: 6px;"><b>१. प्राथमिक वस्तुस्थिती व घटनाक्रम:</b> ${m.factsClean}</div>
+            <div style="margin-bottom: 6px;"><b>२. पाठपुरावा व नकार:</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला. परंतु विरोधी पक्षाने आपली कायदेशीर जबाबदारी पार पाडण्यास साफ नकार दिला व जाणीवपूर्वक टाळाटाळ केली.</div>
+            <div><b>३. कायदेशीर उल्लंघन:</b> विरोधी पक्षाचे सदर कृत्य हे ${m.template.act_reference} अन्वये कायद्याचे थेट व गंभीर उल्लंघन असून तक्रारदारास कायदेशीर दाद मिळणे आवश्यक आहे.</div>
           </div>
 
-          <div style="margin-top: 22px; padding: 9px 14px; background: #f8fafc; border: 1.5px dashed #1e3a8a; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 9pt; color: #1e3a8a; font-weight: 700;">
-            <span>🏛️ फास्टकेस अधिकृत मसुदा</span>
-            <span>(सदर अर्जाचा पुढील भाग, संपूर्ण प्रक्रिया तक्ता, मागण्या व स्वाक्षरी पृष्ठ २ वर चालू...) &rarr;</span>
+          <div style="margin-top: 22px; padding: 9px 14px; background: #f8fafc; border: 1.5px dashed #0f172a; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 9pt; color: #0f172a; font-weight: 700;">
+            <span>🏛️ अधिकृत विधी मसुदा</span>
+            <span>(सदर अर्जाचा पुढील भाग, मागणी व स्वाक्षरी पृष्ठ २ वर चालू...) &rarr;</span>
           </div>
 
           ${renderPublicationFooterHtml(1, 2, m.receiptToUse)}
@@ -816,7 +796,7 @@ export default function SimpleCitizenPortalPage() {
         page2El.style.overflow = "hidden";
 
         page2El.innerHTML = `
-          <div style="border-bottom: 2px solid #1e3a8a; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 9.5pt; color: #1e3a8a; font-weight: 700;">
+          <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 9.5pt; color: #0f172a; font-weight: 700;">
             <div>
               <span>🏛️ कोर्ट तक्रार अर्ज (पुढे चालू - पृष्ठ २) &bull; विषय: ${m.template.subject.slice(0, 48)}...</span>
             </div>
@@ -827,8 +807,8 @@ export default function SimpleCitizenPortalPage() {
 
           <div style="font-size: 9.5pt; line-height: 1.45; color: #0f172a; text-align: justify; margin-bottom: 10px;">
             ${m.extra ? `
-            <div style="margin-bottom: 8px; background: #fdfdfe; border: 1px solid #e2e8f0; padding: 8px 12px; border-radius: 6px;">
-              <b style="color: #1e3a8a;">४. विशेष हकीकत व पुराव्यांचा तपशील:</b><br/>
+            <div style="margin-bottom: 8px; background: #f8fafc; border: 1px solid #cbd5e1; padding: 8px 12px; border-radius: 4px;">
+              <b style="color: #0f172a;">४. विशेष हकीकत व पुराव्यांचा तपशील:</b><br/>
               <span style="font-size: 9pt; color: #1e293b;">${m.extra}</span>
             </div>` : ""}
 
@@ -2215,12 +2195,161 @@ ${template.relief}
                   </div>
                 </div>
 
-                {/* Preformatted Paper View */}
-                <div className="p-4 bg-gray-50 rounded-xl border border-gray-200 font-mono text-[11px] leading-relaxed text-gray-800 whitespace-pre-wrap max-h-[580px] overflow-y-auto shadow-inner">
-                  {generatedDoc || (
-                    <div className="text-center py-16 text-gray-400 space-y-2">
-                      <FileText className="w-8 h-8 mx-auto opacity-30 text-[#013B36]" />
-                      <p className="text-xs font-semibold">डाव्या बाजूला माहिती भरा किंवा 'अधिकृत अर्ज तयार करा' वर क्लिक करा.</p>
+                {/* ── Realistic Interactive A4 Court Document Paper Preview ── */}
+                <div className="p-2 sm:p-4 bg-slate-100/90 rounded-2xl border border-gray-200 max-h-[640px] overflow-y-auto shadow-inner">
+                  {generatedDoc ? (
+                    <div className="bg-white rounded-lg shadow-md border border-slate-300 p-5 sm:p-7 max-w-2xl mx-auto text-slate-900 text-xs sm:text-[13px] leading-relaxed space-y-3.5 transition-all">
+                      {/* Traditional Court Invocation */}
+                      <div className="text-center border-b-2 border-slate-900 pb-3 space-y-1">
+                        <div className="text-[11px] font-bold text-slate-500 tracking-wider">
+                          ॥ श्री गणेशाय नमः ॥ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ॥ सत्यमेव जयते ॥
+                        </div>
+                        <div className="inline-block border-2 border-slate-900 px-4 py-1 rounded bg-slate-50">
+                          <h2 className="text-sm sm:text-base font-extrabold text-slate-950 uppercase tracking-tight">
+                            अधिकृत कायदेशीर तक्रार अर्ज
+                          </h2>
+                        </div>
+                        <p className="text-[11px] font-bold text-slate-800">
+                          {activeProblem?.title_mr || "तक्रार अर्ज"}
+                        </p>
+                        <p className="text-[10px] text-slate-500 font-medium">
+                          (भारतीय नागरिक सुरक्षा संहिता २०२३ / BNS २०२३ अंतर्गत विहित नमुना)
+                        </p>
+                      </div>
+
+                      {/* Reference & Filing Bar */}
+                      <div className="flex flex-wrap items-center justify-between text-[11px] bg-slate-50 border border-slate-200 rounded p-2 text-slate-700">
+                        <div>
+                          <span className="font-bold">नोंदणी क्र.:</span>{" "}
+                          <span className="font-mono font-bold text-emerald-800">{receiptId || "FC-COURT-ONLINE"}</span>
+                        </div>
+                        <div>
+                          <span className="font-bold">दिनांक:</span> {incidentDate || new Date().toLocaleDateString("mr-IN")}
+                        </div>
+                        <div className="text-emerald-700 font-bold text-[10px] bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded">
+                          ✓ कोर्ट-मान्य अधिकृत प्रत
+                        </div>
+                      </div>
+
+                      {/* Recipient */}
+                      <div className="space-y-0.5 text-xs">
+                        <div className="font-bold text-slate-950">प्रति,</div>
+                        <div className="pl-4 font-bold text-slate-800">
+                          {activeProblem?.draft_template?.recipient_title
+                            ?.replace(/\[पोलीस ठाण्याचे नाव\]/g, opponentAddress || incidentPlace || "स्थानिक पोलीस ठाणे")
+                            ?.replace(/\[बँकेचे नाव\]/g, bankOrOrgName || oppositeParty || "संबंधित बँक शाखा")
+                            ?.replace(/\[कार्यालयाचे नाव\]/g, oppositeParty || "सक्षम कार्यालय")
+                            ?.replace(/\[[^\]]+\]/g, "") || "मा. सक्षम प्राधिकारी / पोलीस निरीक्षक साहेब"}
+                        </div>
+                      </div>
+
+                      {/* Subject */}
+                      <div className="border border-slate-900 bg-slate-50 p-2.5 rounded text-xs space-y-1">
+                        <div className="font-bold text-slate-950">
+                          <span className="font-extrabold">विषय: </span>
+                          <span className="underline">{activeProblem?.title_mr || "तक्रार अर्ज"} बाबत दाद मागणेबाबत.</span>
+                        </div>
+                        <div className="text-[11px] text-slate-600 font-medium">
+                          <b>कायदेशीर संदर्भ:</b> {activeProblem?.draft_template?.act_reference || "भारतीय नागरिक सुरक्षा संहिता (BNSS) २०२३ / BNS २०२३"}
+                        </div>
+                      </div>
+
+                      {/* Parties Table */}
+                      <div className="border border-slate-900 rounded overflow-hidden text-[11px]">
+                        <div className="grid grid-cols-2 bg-slate-200 font-extrabold text-slate-900 border-b border-slate-900 px-2.5 py-1">
+                          <div>[१] तक्रारदार / अर्जदार</div>
+                          <div className="border-l border-slate-900 pl-2.5">[२] सामनेवाले / विरोधी पक्ष</div>
+                        </div>
+                        <div className="grid grid-cols-2 p-2.5 gap-2.5 bg-white">
+                          <div className="space-y-0.5">
+                            <div><b>नाव:</b> {applicantName || "________________"}</div>
+                            <div><b>मोबाईल:</b> {applicantPhone || "________________"}</div>
+                            <div><b>पत्ता:</b> {applicantAddress || incidentPlace || "स्थानिक पत्ता"}</div>
+                            {bankOrOrgName && <div><b>बँक:</b> {bankOrOrgName}</div>}
+                            {accountOrUtr && <div><b>खाते क्र.:</b> {accountOrUtr}</div>}
+                          </div>
+                          <div className="border-l border-slate-900 pl-2.5 space-y-0.5">
+                            <div><b>नाव:</b> {oppositeParty || "विरोधी पक्ष / आरोपी"}</div>
+                            <div><b>पत्ता:</b> {opponentAddress || "नमूद पत्ता"}</div>
+                            <div><b>तारीख व वेळ:</b> {incidentDate || "सदर तारीख"} {incidentTime ? `(${incidentTime})` : ""}</div>
+                            {claimAmount && (
+                              <div className="text-red-700 font-bold">
+                                <b>दावा रक्कम:</b> ₹ {claimAmount}/-
+                              </div>
+                            )}
+                            {accountOrUtr && <div><b>व्यवहार / UTR:</b> {accountOrUtr}</div>}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Facts */}
+                      <div className="space-y-1.5 text-xs text-justify">
+                        <div className="font-bold text-slate-950">
+                          महोदय, तक्रारदाराचे सविस्तर व सत्य कथन खालीलप्रमाणे आहे:-
+                        </div>
+                        <p className="leading-relaxed">
+                          <b>१. प्राथमिक वस्तुस्थिती:</b>{" "}
+                          {extraDetails.trim()
+                            ? extraDetails
+                            : activeProblem?.draft_template?.body_facts
+                                ?.replace(/\[आपले नाव\]/g, applicantName || "अर्जदार")
+                                ?.replace(/\[बँकेचे नाव\]/g, bankOrOrgName || oppositeParty || "बँक")
+                                ?.replace(/\[रक्कम\]/g, claimAmount ? `रु. ${claimAmount}/-` : "रक्कम")
+                                ?.replace(/\[[^\]]+\]/g, "") || "अर्जदाराच्या कायदेशीर हक्कांचे थेट व गंभीर उल्लंघन झाले आहे."}
+                        </p>
+                        <p className="leading-relaxed">
+                          <b>२. पाठपुरावा व नकार:</b> तक्रारदाराने सदर गंभीर घटनेबाबत विरोधी पक्षाकडे वारंवार कायदेशीर विचारणा व पाठपुरावा केला, परंतु त्यांनी कायदेशीर जबाबदारी पार पाडण्यास नकार दिला व जाणीवपूर्वक टाळाटाळ केली.
+                        </p>
+                        <p className="leading-relaxed">
+                          <b>३. कायदेशीर उल्लंघन:</b> विरोधी पक्षाचे सदर कृत्य प्रचलित फौजदारी व दिवाणी कायद्यांचे थेट उल्लंघन असून तक्रारदारास कायदेशीर संरक्षण व भरपाई मिळणे आवश्यक आहे.
+                        </p>
+                      </div>
+
+                      {/* Relief Box */}
+                      <div className="bg-emerald-50/80 border border-emerald-300 rounded p-3 text-xs space-y-1">
+                        <div className="font-extrabold text-emerald-950">
+                          विनंती व कायदेशीर मागणी (Relief & Prayers):
+                        </div>
+                        <p className="text-emerald-900 leading-relaxed font-medium">
+                          {activeProblem?.draft_template?.relief || "सदर प्रकरणी योग्य ती कायदेशीर चौकशी करून अर्जदारास तात्काळ न्याय व नुकसानभरपाई मिळवून द्यावी ही नम्र विनंती."}
+                        </p>
+                      </div>
+
+                      {/* Enclosures */}
+                      <div className="bg-slate-50 border border-slate-200 rounded p-2 text-[11px] text-slate-700">
+                        <b>सोबत जोडलेली कागदपत्रे (सत्यप्रत):</b><br />
+                        ☑ १. तक्रारदाराच्या आधार कार्डची प्रत &nbsp;&bull;&nbsp;
+                        ☑ २. बँक स्टेटमेंट / पासबुक / व्यवहाराची पावती &nbsp;&bull;&nbsp;
+                        ☑ ३. व्यवहार UTR क्र. / स्क्रीनशॉट / पुरावे.
+                      </div>
+
+                      {/* Verification */}
+                      <div className="border-t border-dashed border-slate-300 pt-2 text-[10px] text-slate-600 text-justify">
+                        <b>सत्यता पडताळणी (Verification):</b> मी वर नमूद तक्रारदार सत्यप्रतिज्ञेवर जाहीर करतो/करते की, वरील अर्जातील सर्व मजकूर माझ्या स्वतःच्या माहितीप्रमाणे व कागदपत्रांनुसार सत्य व बिनचूक आहे.
+                      </div>
+
+                      {/* Signature */}
+                      <div className="flex justify-between items-end pt-2 text-xs">
+                        <div>
+                          <div><b>दिनांक:</b> {incidentDate || new Date().toLocaleDateString("mr-IN")}</div>
+                          <div><b>ठिकाण:</b> {incidentPlace || "स्थानिक"}</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="w-36 border-b border-slate-900 mb-1" />
+                          <div className="font-bold text-slate-950">तक्रारदाराची सही / अंगठा</div>
+                          <div className="text-[11px] text-slate-600">({applicantName || "तक्रारदार"})</div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-20 text-slate-400 space-y-2">
+                      <FileText className="w-10 h-10 mx-auto opacity-30 text-[#013B36]" />
+                      <p className="text-xs font-semibold text-slate-600">
+                        डाव्या बाजूला माहिती भरा किंवा 'अधिकृत अर्ज तयार करा' वर क्लिक करा.
+                      </p>
+                      <p className="text-[11px] text-slate-400">
+                        येथे थेट कोर्ट-मान्य A4 अर्जाचे पूर्वावलोकन दिसेल.
+                      </p>
                     </div>
                   )}
                 </div>

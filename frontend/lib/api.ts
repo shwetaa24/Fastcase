@@ -62,9 +62,13 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const original = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
     const isAuthRoute =
+      original?.url?.includes("/auth/") ||
       original?.url?.includes("/auth/token") ||
       original?.url?.includes("/auth/refresh") ||
-      original?.url?.includes("/auth/client-login");
+      original?.url?.includes("/auth/client-login") ||
+      original?.url?.includes("/auth/citizen-login") ||
+      original?.url?.includes("/auth/forgot-password") ||
+      original?.url?.includes("/auth/reset-password");
 
     if (error.response?.status === 401 && !original._retry && !isAuthRoute) {
       if (isRefreshing) {
@@ -119,7 +123,23 @@ api.interceptors.response.use(
 
 export function getErrorMessage(error: unknown, fallback: string = "An unexpected error occurred"): string {
   if (axios.isAxiosError(error)) {
-    return error.response?.data?.detail || error.response?.data?.message || error.message || fallback;
+    const detail = error.response?.data?.detail;
+    if (typeof detail === "string") return detail;
+    if (Array.isArray(detail)) {
+      return detail
+        .map((d: any) => (typeof d === "string" ? d : d?.msg || JSON.stringify(d)))
+        .join(", ");
+    }
+    if (detail && typeof detail === "object") {
+      return (detail as any).msg || (detail as any).message || JSON.stringify(detail);
+    }
+    const message = error.response?.data?.message;
+    if (typeof message === "string") return message;
+    if (error.message && typeof error.message === "string") return error.message;
+    return fallback;
+  }
+  if (error instanceof Error && typeof error.message === "string") {
+    return error.message;
   }
   return fallback;
 }
