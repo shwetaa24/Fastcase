@@ -90,10 +90,11 @@ export default function ForgotPasswordModal({
       });
       toast.success(data?.message || "Password reset successfully. Please sign in.");
       onSuccessEmail?.(cleanEmail);
-      onClose();
+      setTimeout(() => {
+        onClose();
+      }, 100);
     } catch (err) {
       toast.error(getErrorMessage(err));
-    } finally {
       setSubmitting(false);
     }
   };
