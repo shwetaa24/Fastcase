@@ -68,6 +68,7 @@ services:
     restart: unless-stopped
     env_file:
       - path: ./backend/.env.production
+        required: false
       - path: ./backend/.env.secrets   # gitignored: Razorpay/SMTP keys, survives deploys
         required: false
     environment:
