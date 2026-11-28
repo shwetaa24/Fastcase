@@ -44,7 +44,7 @@ import { loadRazorpayScript } from "@/lib/razorpay";
 import PropertyLegalCheck from "./PropertyLegalCheck";
 
 type Language = "mr" | "hi" | "en";
-type ActiveTab = "solve" | "draft" | "saved" | "property";
+type ActiveTab = "draft" | "saved" | "property";
 
 export default function SimpleCitizenPortalPage() {
   const router = useRouter();
@@ -57,15 +57,17 @@ export default function SimpleCitizenPortalPage() {
 
   const [lang, setLang] = useState<Language>("mr");
 
-  // ── 3 Main Navigation Tabs ────────────────────────────────────────────────
-  // 1: "solve" (समस्या व उपाय)
-  // 2: "draft" (अधिकृत अर्ज जनरेटर - ₹३०)
-  // 3: "saved" (माझे जतन केलेले अर्ज)
-  const [activeTab, setActiveTab] = useState<ActiveTab>("solve");
+  // ── Main Navigation Tabs ──────────────────────────────────────────────────
+  // 1: "draft" (अधिकृत कोर्ट अर्ज जनरेटर - ₹३०) - DIRECT DEFAULT
+  // 2: "saved" (माझे जतन केलेले अर्ज)
+  // 3: "property" (मालमत्ता कायदेशीर तपासणी)
+  const [activeTab, setActiveTab] = useState<ActiveTab>("draft");
 
   // ── Problem & Solution State ──────────────────────────────────────────────
   const [problemText, setProblemText] = useState<string>("");
-  const [activeProblem, setActiveProblem] = useState<QuickProblem | null>(null);
+  const [activeProblem, setActiveProblem] = useState<QuickProblem | null>(
+    QUICK_PROBLEMS.find((p) => p.id === "police_complaint") || QUICK_PROBLEMS[0]
+  );
 
   // ── Drafting Form State ───────────────────────────────────────────────────
   const [applicantName, setApplicantName] = useState<string>("");
@@ -1507,44 +1509,24 @@ ${template.relief}
         </div>
       )}
 
-      {/* ── 4 SMALL ATTRACTIVE TABS (Compact Segmented Control - Option 2: Navy/Cream/Coral) ── */}
+      {/* ── 3 COMPACT NAVIGATION TABS ── */}
       <div className="max-w-4xl w-full mx-auto px-4 pt-4 pb-2">
-        <div className="flex p-1 bg-white rounded-xl border border-gray-200 shadow-2xs max-w-2xl mx-auto gap-1">
-          {/* Tab 1: समस्या व उपाय */}
+        <div className="flex p-1 bg-white rounded-xl border border-gray-200 shadow-2xs max-w-xl mx-auto gap-1">
+          {/* Tab 1: कोर्ट अर्ज जनरेटर (₹३०) - DIRECT DEFAULT */}
           <button
-            onClick={() => setActiveTab("solve")}
+            onClick={() => setActiveTab("draft")}
             className={cn(
-              "flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer",
-              activeTab === "solve"
-                ? "bg-[#013B36] text-white shadow-xs"
-                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
-            )}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#059669]" />
-            <span>१. समस्या व उपाय</span>
-          </button>
-
-          {/* Tab 2: अर्ज जनरेटर (₹३०) */}
-          <button
-            onClick={() => {
-              if (!isAuthenticated) {
-                requireAuth("tab_draft", () => setActiveTab("draft"));
-              } else {
-                setActiveTab("draft");
-              }
-            }}
-            className={cn(
-              "flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer",
+              "flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer",
               activeTab === "draft"
                 ? "bg-[#013B36] text-white shadow-xs"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
             )}
           >
             <FileText className="w-3.5 h-3.5 text-[#059669]" />
-            <span>२. अर्ज जनरेटर (₹३०)</span>
+            <span>१. कोर्ट अर्ज जनरेटर (₹३०)</span>
           </button>
 
-          {/* Tab 3: माझे अर्ज */}
+          {/* Tab 2: माझे अर्ज */}
           <button
             onClick={() => {
               if (!isAuthenticated) {
@@ -1554,14 +1536,14 @@ ${template.relief}
               }
             }}
             className={cn(
-              "flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer relative",
+              "flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer relative",
               activeTab === "saved"
                 ? "bg-[#013B36] text-white shadow-xs"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
             )}
           >
             <FileCheck className="w-3.5 h-3.5 text-[#059669]" />
-            <span>३. माझे अर्ज</span>
+            <span>२. माझे अर्ज</span>
             {savedDocs.length > 0 && (
               <span className="ml-1 px-1.5 py-0.2 rounded-full bg-[#059669] text-white text-[9px] font-black">
                 {savedDocs.length}
@@ -1569,18 +1551,18 @@ ${template.relief}
             )}
           </button>
 
-          {/* Tab 4: मालमत्ता कायदेशीर तपासणी */}
+          {/* Tab 3: मालमत्ता कायदेशीर तपासणी */}
           <button
             onClick={() => setActiveTab("property")}
             className={cn(
-              "flex-1 py-1.5 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer",
+              "flex-1 py-2 px-3 rounded-lg transition-all flex items-center justify-center gap-1.5 text-xs font-black cursor-pointer",
               activeTab === "property"
                 ? "bg-[#013B36] text-white shadow-xs"
                 : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
             )}
           >
             <Building2 className="w-3.5 h-3.5 text-[#059669]" />
-            <span>४. मालमत्ता तपासणी</span>
+            <span>३. मालमत्ता तपासणी</span>
           </button>
         </div>
       </div>
@@ -1589,305 +1571,91 @@ ${template.relief}
       <main className={cn("w-full mx-auto px-4 py-3 flex-1 space-y-4 transition-all", activeTab === "draft" ? "max-w-7xl" : "max-w-4xl")}>
 
         {/* ═══════════════════════════════════════════════════════════════════
-            TAB 1: समस्या व कायदेशीर उपाय (4-STEP GUIDED WORKFLOW)
-            Step 1: केस निवडा (Select Case)
-            Step 2: उपाय पहा (View Solution)
-            Step 3: कोर्ट अर्ज उघडा (Open Court Draft)
-            Step 4: ₹३० भरणा व PDF डाऊनलोड (Pay ₹30 & Download PDF)
+            अधिकृत तक्रार अर्ज जनरेटर (DIRECT DOCUMENT GENERATOR - ₹30)
         ══════════════════════════════════════════════════════════════════════ */}
-        {activeTab === "solve" && (
+        {activeTab === "draft" && (
           <div className="space-y-4">
-            {/* ── 4-Step Interactive Visual Stepper ── */}
-            <div className="flex items-center justify-between max-w-xl mx-auto px-3 py-2 bg-white rounded-xl border border-gray-200/90 text-[11px] font-bold text-gray-500 shadow-2xs">
-              <div className={cn("flex items-center gap-1.5 transition-colors", (selectedCategoryId || problemText) ? "text-[#013B36] font-black" : "text-gray-400")}>
-                <span className={cn("w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-black transition-colors", (selectedCategoryId || problemText) ? "bg-[#013B36] text-white" : "bg-gray-100 text-gray-500")}>
-                  १
-                </span>
-                <span>१. केस निवडा</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
-              <div className={cn("flex items-center gap-1.5 transition-colors", (showSolution && activeProblem) ? "text-[#013B36] font-black" : "text-gray-400")}>
-                <span className={cn("w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-black transition-colors", (showSolution && activeProblem) ? "bg-[#013B36] text-white" : "bg-gray-100 text-gray-500")}>
-                  २
-                </span>
-                <span>२. कायदेशीर उपाय</span>
-              </div>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
-              <button
-                type="button"
-                onClick={() => {
-                  if (activeProblem) {
-                    generateDraftForProblem(activeProblem, applicantName, applicantPhone, oppositeParty, incidentPlace, incidentDate);
-                  }
-                  setActiveTab("draft");
-                }}
-                className={cn("flex items-center gap-1.5 transition-colors cursor-pointer", activeProblem ? "text-[#013B36] font-black" : "text-gray-400")}
-              >
-                <span className={cn("w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-black transition-colors", activeProblem ? "bg-[#013B36] text-white" : "bg-gray-100 text-gray-500")}>
-                  ३
-                </span>
-                <span>३. कोर्ट अर्ज</span>
-              </button>
-              <ChevronRight className="w-3.5 h-3.5 text-gray-300" />
-              <div className={cn("flex items-center gap-1.5 transition-colors", isPaid ? "text-[#013B36] font-black" : "text-gray-400")}>
-                <span className={cn("w-4 h-4 rounded-full text-[9px] flex items-center justify-center font-black transition-colors", isPaid ? "bg-[#013B36] text-white" : "bg-gray-100 text-gray-500")}>
-                  ४
-                </span>
-                <span>४. ₹३० भरणा व PDF</span>
-              </div>
-            </div>
-
-            {/* ── Step 1: Compact Search & Problem Selection Box ── */}
+            {/* ── Direct Problem / Case Selector & Instant Legal Right Banner ── */}
             <div className="bg-white rounded-2xl border border-gray-200/90 p-4 sm:p-5 shadow-xs space-y-3">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-black text-gray-900 flex items-center gap-1.5">
-                  <Sparkles className="w-3.5 h-3.5 text-[#059669]" />
-                  पायरी १: आपली कायदेशीर समस्या निवडा किंवा शोधा:
-                </span>
-                <span className="text-[11px] text-gray-400 font-medium hidden sm:inline">
-                  विषयावर १-क्लिक करा व नंतर 'उपाय पहा' वर क्लिक करा
-                </span>
-              </div>
-
-              {/* Compact Unified Search Bar */}
-              <div className="flex flex-col sm:flex-row items-center gap-2">
-                <div className="relative w-full">
-                  <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={problemText}
-                    onChange={(e) => {
-                      setProblemText(e.target.value);
-                      setShowSolution(false);
-                      setShowDocument(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") handleSolveProblem();
-                    }}
-                    placeholder="उदा. ऑनलाइन पैसे कापले, पगार दिला नाही, पोलिसांनी FIR नाकारली..."
-                    className="w-full pl-9 pr-8 py-2.5 text-xs sm:text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:border-[#013B36] focus:ring-2 focus:ring-[#059669]/20 focus:bg-white transition font-medium text-gray-900"
-                  />
-                  {problemText && (
-                    <button
-                      onClick={() => {
-                        setProblemText("");
-                        setSelectedCategoryId(null);
-                        setShowSolution(false);
-                        setShowDocument(false);
-                      }}
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 text-xs p-1"
-                    >
-                      ✕
-                    </button>
-                  )}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-gray-100">
+                <div className="flex items-center gap-2">
+                  <span className="w-6 h-6 rounded-lg bg-[#013B36] text-white flex items-center justify-center text-xs font-black">
+                    १
+                  </span>
+                  <h2 className="text-sm font-black text-gray-900">
+                    कायदेशीर तक्रारीचा प्रकार निवडा (Select Legal Issue):
+                  </h2>
                 </div>
-                <button
-                  onClick={() => handleSolveProblem()}
-                  className="w-full sm:w-auto px-5 py-2.5 bg-[#013B36] hover:bg-[#024E47] text-white text-xs font-black rounded-xl transition flex items-center justify-center gap-1.5 shrink-0 shadow-md shadow-[#013B36]/25 cursor-pointer"
-                >
-                  <span>कायदेशीर उपाय पहा (View Solution)</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* User-Friendly Quick Category Cards (Click to Select Case) */}
-              <div className="pt-2 border-t border-gray-100">
-                <p className="text-[11px] font-bold text-gray-500 mb-2">
-                  किंवा खालील प्रमुख कायदेशीर विषयांमधून आपली केस निवडा (महाराष्ट्र नागरिक कायदेविषयक मार्गदर्शिका):
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {[
-                    { id: "cyber_fraud", icon: "💳", label: "बँक / UPI फ्रॉड", desc: "पैसे कापले / ऑनलाइन फसवणूक" },
-                    { id: "police_refusal", icon: "👮", label: "पोलीस FIR नकार", desc: "तक्रार नोंदवण्यास नकार" },
-                    { id: "police_complaint", icon: "📝", label: "पोलीस ठाण्यात तक्रार", desc: "दखलपात्र लेखी तक्रार अर्ज" },
-                    { id: "fir_registration", icon: "📋", label: "FIR नोंदणी अधिकार", desc: "BNSS १७३ मोफत FIR प्रत" },
-                    { id: "zero_fir", icon: "📍", label: "Zero FIR प्रक्रिया", desc: "कोणत्याही ठाण्यात थेट FIR" },
-                    { id: "arrest_rights", icon: "🔒", label: "अटक व नागरिक हक्क", desc: "D.K. Basu मार्गदर्शक तत्त्वे" },
-                    { id: "bail_procedure", icon: "🗝️", label: "जामीन (Bail) प्रक्रिया", desc: "BNSS जामीन तरतुदी व हक्क" },
-                    { id: "consumer_fraud", icon: "🛒", label: "ग्राहक तक्रार", desc: "खराब वस्तू / वॉरंटी नाकारली" },
-                    { id: "property_land", icon: "🏠", label: "जमीन व घर वाद", desc: "अतिक्रमण / जागा हक्क वाद" },
-                    { id: "women_safety", icon: "👩", label: "महिला सुरक्षा", desc: "कौटुंबिक छळ व महिला हक्क" },
-                    { id: "unpaid_salary", icon: "💼", label: "पगार / नोकरी वाद", desc: "थकीत पगार किंवा नोकरी प्रश्न" },
-                    { id: "lost_document", icon: "🔍", label: "कागदपत्रे / फोन गहाळ", desc: "आधार, पॅन किंवा फोन हरवला" },
-                  ].map((topic) => {
-                    const prob = QUICK_PROBLEMS.find((p) => p.id === topic.id);
-                    const isSelected = selectedCategoryId === topic.id;
-                    return (
-                      <button
-                        key={topic.id}
-                        type="button"
-                        onClick={() => {
-                          if (prob) {
-                            setSelectedCategoryId(topic.id);
-                            setProblemText(prob.title_mr);
-                            setShowSolution(false);
-                            setShowDocument(false);
-                          }
-                        }}
-                        className={cn(
-                          "p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer",
-                          isSelected
-                            ? "bg-[#013B36] text-white border-[#013B36] shadow-sm ring-2 ring-[#059669]/30"
-                            : "bg-gray-50/80 hover:bg-[#ECFDF5] text-gray-800 border-gray-200/90 hover:border-[#013B36]/30"
-                        )}
-                      >
-                        <div className="flex items-center gap-1.5 mb-1">
-                          <span className="text-base">{topic.icon}</span>
-                          <span className={cn("text-xs font-black truncate", isSelected ? "text-[#6EE7B7]" : "text-gray-900")}>
-                            {topic.label}
-                          </span>
-                        </div>
-                        <span className={cn("text-[10px] line-clamp-1 leading-tight", isSelected ? "text-[#6EE7B7]" : "text-gray-500")}>
-                          {topic.desc}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* ── Step 2: Visual, Friendly & Easy-to-Understand Solution Card ── */}
-            {showSolution && activeProblem && (
-              <div ref={solutionRef} className="bg-white rounded-2xl border border-gray-200/90 p-4 sm:p-5 shadow-xs space-y-4 animate-in fade-in duration-200">
-                {/* Header Row */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-gray-100">
-                  <div className="space-y-1">
-                    <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-[#ECFDF5] text-[#013B36] border border-[#A7F3D0]">
-                      {activeProblem.category_name_mr}
-                    </span>
-                    <h3 className="text-base sm:text-lg font-black text-gray-900 tracking-tight">
-                      {activeProblem.title_mr}
-                    </h3>
-                  </div>
-
+                {activeProblem?.helpline && (
                   <a
                     href={`tel:${activeProblem.helpline}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-bold transition w-fit"
                   >
                     <PhoneCall className="w-3.5 h-3.5 text-red-600" />
                     <span>{activeProblem.helpline_label}</span>
                   </a>
-                </div>
+                )}
+              </div>
 
-                {/* Key Legal Right (Clean Warm Cream / Navy Highlight Box) */}
-                <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3.5 flex items-start gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-[#013B36] text-white flex items-center justify-center shrink-0 shadow-2xs font-bold text-sm">
+              {/* Quick 1-Click Problem Selector Chips */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-1.5 pt-1">
+                {[
+                  { id: "police_complaint", icon: "📝", label: "पोलीस ठाण्यात तक्रार" },
+                  { id: "cyber_fraud", icon: "💳", label: "बँक / UPI फ्रॉड" },
+                  { id: "fir_registration", icon: "📋", label: "FIR नोंदणी अधिकार" },
+                  { id: "police_refusal", icon: "👮", label: "पोलीस FIR नकार" },
+                  { id: "consumer_fraud", icon: "🛒", label: "ग्राहक तक्रार" },
+                  { id: "property_land", icon: "🏠", label: "जमीन व घर वाद" },
+                  { id: "unpaid_salary", icon: "💼", label: "पगार / नोकरी वाद" },
+                  { id: "women_safety", icon: "👩", label: "महिला सुरक्षा" },
+                  { id: "lost_document", icon: "🔍", label: "कागदपत्रे / फोन गहाळ" },
+                  { id: "bail_procedure", icon: "🗝️", label: "जामीन (Bail)" },
+                  { id: "zero_fir", icon: "📍", label: "Zero FIR" },
+                  { id: "arrest_rights", icon: "🔒", label: "अटक व नागरिक हक्क" },
+                ].map((cat) => {
+                  const isSelected = activeProblem?.id === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => {
+                        const found = QUICK_PROBLEMS.find((p) => p.id === cat.id);
+                        if (found) {
+                          setActiveProblem(found);
+                          setSelectedCategoryId(cat.id);
+                          generateDraftForProblem(found, applicantName, applicantPhone, oppositeParty, incidentPlace, incidentDate);
+                        }
+                      }}
+                      className={cn(
+                        "px-2.5 py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer border text-left",
+                        isSelected
+                          ? "bg-[#013B36] text-white border-[#013B36] shadow-xs ring-2 ring-[#059669]/40"
+                          : "bg-gray-50 hover:bg-[#ECFDF5] text-gray-700 border-gray-200 hover:border-[#013B36]/30"
+                      )}
+                    >
+                      <span className="text-sm shrink-0">{cat.icon}</span>
+                      <span className="truncate">{cat.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Instant Legal Right Pill */}
+              {activeProblem && (
+                <div className="bg-[#ECFDF5] border border-[#A7F3D0] rounded-xl p-3 flex items-start gap-2.5 text-xs">
+                  <div className="w-5 h-5 rounded-md bg-[#013B36] text-white flex items-center justify-center shrink-0 text-[10px] font-bold mt-0.5">
                     ✓
                   </div>
-                  <div>
-                    <span className="text-xs font-black text-[#013B36] block">
-                      तुमचा मुख्य कायदेशीर हक्क (Your Legal Right):
-                    </span>
-                    <p className="text-xs text-gray-800 font-medium leading-relaxed mt-0.5">
+                  <div className="space-y-0.5 text-gray-800">
+                    <span className="font-bold text-[#013B36]">
+                      {activeProblem.title_mr}:
+                    </span>{" "}
+                    <span className="font-medium text-gray-700 leading-snug">
                       {activeProblem.short_rights_mr}
-                    </p>
+                    </span>
                   </div>
                 </div>
-
-                {/* 3 Step-by-Step Clear Action Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  {/* Card 1: Where to go */}
-                  <div className="bg-white rounded-xl p-3.5 border border-gray-200 shadow-2xs space-y-2">
-                    <div className="flex items-center gap-2 text-[#013B36] font-black text-xs">
-                      <span className="w-5 h-5 rounded-md bg-[#ECFDF5] text-[#013B36] flex items-center justify-center text-xs">🏛️</span>
-                      <span>१. कुठे जावे? (Where to Go)</span>
-                    </div>
-                    <p className="text-xs text-gray-800 font-semibold leading-relaxed">
-                      {activeProblem.where_to_go_mr}
-                    </p>
-                  </div>
-
-                  {/* Card 2: How to do it */}
-                  <div className="bg-white rounded-xl p-3.5 border border-gray-200 shadow-2xs space-y-2">
-                    <div className="flex items-center gap-2 text-amber-950 font-black text-xs">
-                      <span className="w-5 h-5 rounded-md bg-amber-100 text-amber-900 flex items-center justify-center text-xs">📝</span>
-                      <span>२. काय करावे? (३ सोप्या पायऱ्या)</span>
-                    </div>
-                    <div className="space-y-1.5 text-xs text-gray-800 font-medium">
-                      {activeProblem.simple_steps_mr.map((st, i) => (
-                        <div key={i} className="flex items-start gap-2">
-                          <span className="w-4 h-4 rounded-full bg-amber-100 text-amber-900 text-[10px] font-black flex items-center justify-center shrink-0 mt-0.5">
-                            {i + 1}
-                          </span>
-                          <span className="leading-snug">{st.replace(/^पायरी \d+:\s*/, "")}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Card 3: Documents needed */}
-                  <div className="bg-white rounded-xl p-3.5 border border-gray-200 shadow-2xs space-y-2">
-                    <div className="flex items-center gap-2 text-[#013B36] font-black text-xs">
-                      <span className="w-5 h-5 rounded-md bg-[#ECFDF5] text-[#013B36] flex items-center justify-center text-xs">📑</span>
-                      <span>३. लागणारी कागदपत्रे</span>
-                    </div>
-                    <div className="space-y-1.5 text-xs text-gray-800 font-medium">
-                      {activeProblem.required_docs_mr.map((doc, i) => (
-                        <div key={i} className="flex items-start gap-1.5">
-                          <span className="text-[#059669] font-bold">✓</span>
-                          <span className="leading-snug">{doc}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* ── Step 3 Trigger: Open Court Document Action Banner ── */}
-                <div className="pt-2 bg-gradient-to-r from-[#021F1B] via-[#03362E] to-[#02201D] border border-[#013B36] rounded-xl p-3.5 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md">
-                  <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <span className="text-xs sm:text-sm font-black text-white">
-                        या समस्येचा अधिकृत कोर्ट अर्ज तयार करू इच्छिता?
-                      </span>
-                      <span className="text-[9px] font-black px-1.5 py-0.2 rounded-md bg-[#059669] text-white">
-                        कोर्ट-मान्य A4
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-[#6EE7B7] font-medium">
-                      वकिलांशिवाय ५ मिनिटांत कोर्ट-मान्य अधिकृत A4 अर्ज तात्काळ पहा व डाऊनलोड करा.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (activeProblem) {
-                        generateDraftForProblem(activeProblem, applicantName, applicantPhone, oppositeParty, incidentPlace, incidentDate);
-                      }
-                      setActiveTab("draft");
-                      if (typeof window !== "undefined") {
-                        window.scrollTo({ top: 0, behavior: "smooth" });
-                      }
-                    }}
-                    className="w-full sm:w-auto px-5 py-2.5 bg-[#013B36] hover:bg-[#024E47] text-white font-black text-xs rounded-xl shadow-md shadow-[#013B36]/25 transition flex items-center justify-center gap-2 cursor-pointer shrink-0"
-                  >
-                    <FileText className="w-3.5 h-3.5 text-white" />
-                    <span>अधिकृत कोर्ट अर्ज उघडा (Open Court Draft) →</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-          </div>
-        )}
-
-        {/* ═══════════════════════════════════════════════════════════════════
-            TAB 2: अधिकृत तक्रार अर्ज जनरेटर (COMPACT DRAFTER - ₹30)
-        ══════════════════════════════════════════════════════════════════════ */}
-        {activeTab === "draft" && (
-          <div className="space-y-4">
-            {/* Context Badge */}
-            <div className="bg-white rounded-xl border border-gray-200/90 p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-500 font-medium">निवडलेली तक्रार:</span>
-                <strong className="text-[#013B36] font-bold">{activeProblem?.title_mr || "तक्रार अर्ज"}</strong>
-              </div>
-              <button
-                onClick={() => setActiveTab("solve")}
-                className="text-xs font-bold text-[#059669] hover:underline cursor-pointer"
-              >
-                तक्रार बदला ↻
-              </button>
+              )}
             </div>
 
             {/* 2 COLUMNS NEXT TO EACH OTHER (SIDE-BY-SIDE) */}
@@ -2418,7 +2186,7 @@ ${template.relief}
                 <FileText className="w-8 h-8 mx-auto opacity-40" />
                 <p className="text-xs font-semibold">अद्याप कोणताही अर्ज जतन केलेला नाही.</p>
                 <button
-                  onClick={() => setActiveTab("solve")}
+                  onClick={() => setActiveTab("draft")}
                   className="text-xs font-bold text-[#059669] hover:underline cursor-pointer"
                 >
                   नवीन अर्ज तयार करा →
